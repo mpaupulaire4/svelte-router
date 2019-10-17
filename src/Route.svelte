@@ -1,11 +1,10 @@
-<svelte:options tag="svelte-route"/>
 <script>
   import { setContext, getContext } from 'svelte';
   import { derived } from 'svelte/store';
   import URLPattern from 'url-pattern';
 
-  export let component = false
-  export let dynamic = false
+  export let preload = () => ({})
+  export let component = null
   export let absolute = false
   export let path = '*'
 
@@ -31,13 +30,11 @@
 
 </script>
 {#if $p}
-{#if component}
-  <svelte:component this="{component}" />
-{:else if dynamic}
-{#await dynamic() then comp}
-  <svelte:component this="{comp}" />
-{/await}
-{:else}
-  <slot params="{$p}" query="{$query}" route="{$route}" />
-{/if}
+  {#await preload({params: $p, query: $query, path: $route}) then data}
+    {#if component}
+      <svelte:component this="{component}" {...data} params="{$p}" query="{$query}" route="{$route}" />
+    {:else}
+      <slot params="{$p}" query="{$query}" route="{$route}" {data} />
+    {/if}
+  {/await}
 {/if}
