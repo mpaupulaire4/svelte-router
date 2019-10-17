@@ -1,0 +1,31 @@
+{
+  "name": "svelte-router",
+  "svelte": "src/index.js",
+  "module": "dist/index.mjs",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "rollup": "^1.11.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^4.0.0",
+    "rollup-plugin-svelte": "^5.0.0",
+    "svelte": "^3.0.0"
+  },
+  "keywords": [
+    "svelte",
+    "router",
+    "client",
+    "routing"
+  ],
+  "files": [
+    "src",
+    "dist"
+  ],
+  "dependencies": {
+    "qs": "^6.9.0",
+    "url-pattern": "^1.0.3"
+  }
+}
