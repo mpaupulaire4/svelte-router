@@ -10,8 +10,8 @@
     })
   }
 
-  export const query = writable(qsparse(window.location.search));
-  export const route = writable(window.location.pathname);
+  const query = writable(qsparse(window.location.search));
+  const route = writable(window.location.pathname);
 
   function which(event) {
     return event.which === null ? event.button : event.which;
