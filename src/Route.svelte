@@ -1,3 +1,4 @@
+<svelte:options tag="svelte-route"/>
 <script>
   import { setContext, getContext } from 'svelte';
   import { derived } from 'svelte/store';
