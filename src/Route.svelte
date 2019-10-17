@@ -33,7 +33,7 @@
 {#if $p}
   {#await preload({params: $p, query: $query, path: $route}) then data}
     {#if component}
-      <svelte:component this="{component}" {...data} params="{$p}" query="{$query}" route="{$route}" />
+      <svelte:component this="{component}" params="{$p}" query="{$query}" route="{$route}" {...data} />
     {:else}
       <slot params="{$p}" query="{$query}" route="{$route}" {data} />
     {/if}
