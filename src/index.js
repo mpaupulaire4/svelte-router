@@ -1,4 +1,5 @@
 export * from './Router.svelte'
 export * from './Route.svelte'
+export * from './actions'
 export { default as Router } from './Router.svelte'
 export { default as Route } from './Route.svelte'

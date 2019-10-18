@@ -1,14 +1,16 @@
 <svelte:options tag="svelte-router"/>
+<script context="module">
+  import { writable } from 'svelte/store';
 
+  export const query = writable(qsparse(window.location.search));
+  export const route = writable(window.location.pathname);
+</script>
 <script>
   import { setContext } from 'svelte';
-  import { readable, writable, get } from 'svelte/store';
+  import { readable } from 'svelte/store';
   import { qsparse, handle_click } from './utils'
 
   export let base = ''
-
-  const query = writable(qsparse(window.location.search));
-  const route = writable(window.location.pathname);
   const context = {
     route,
     query,
