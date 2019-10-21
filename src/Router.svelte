@@ -17,7 +17,7 @@
     params: readable({}, () => () => {}),
     segment: '',
     history: window.history,
-    base: base.replace(/^([^/])\/?$/, '/$1')
+    base: base.replace(/^\/?([^/])\/?$/, '/$1/')
   }
 
   setContext('svelte-router', context)
