@@ -31,7 +31,8 @@
   ],
   "files": [
     "src",
-    "dist"
+    "dist",
+    "README.md"
   ],
   "dependencies": {
     "qs": "^6.9.0",
