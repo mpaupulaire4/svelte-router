@@ -1,7 +1,7 @@
 {
-  "name": "svelte-router",
+  "name": "@mpaupulaire4/svelte-router",
   "svelte": "src/index.js",
-  "module": "dist/index.mjs",
+  "module": "dist/index.m.js",
   "main": "dist/index.js",
   "scripts": {
     "build": "rollup -c",
@@ -13,6 +13,9 @@
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-svelte": "^5.0.0",
     "svelte": "^3.0.0"
+  },
+  "publishConfig": {
+    "registry":"https://npm.pkg.github.com/"
   },
   "keywords": [
     "svelte",
@@ -27,5 +30,11 @@
   "dependencies": {
     "qs": "^6.9.0",
     "url-pattern": "^1.0.3"
-  }
+  },
+  "version": "1.0.0",
+  "description": "A simple client side router written in svelte",
+  "repository": "git@github.com:mpaupulaire4/svelte-router.git",
+  "author": "Michel Paupulaire <mpaupulaire4@gmail.com>",
+  "license": "MIT",
+  "private": false
 }

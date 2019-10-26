@@ -5,6 +5,7 @@ A simple client side router written in svelte.
 # TODO
 
 * [ ] Docs
+* [ ] Tests
 * [ ] route errors (404 page and what not)
 * [ ] renderless redirect component
 * [ ] route preloading on link hover/mousedown
