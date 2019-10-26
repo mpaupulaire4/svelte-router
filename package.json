@@ -1,7 +1,7 @@
 {
   "name": "@mpaupulaire4/svelte-router",
   "description": "A simple client side router written in svelte",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Michel Paupulaire <mpaupulaire4@gmail.com>",
   "repository": "git@github.com:mpaupulaire4/svelte-router.git",
   "license": "MIT",
@@ -21,7 +21,7 @@
     "svelte": "^3.0.0"
   },
   "publishConfig": {
-    "registry":"https://npm.pkg.github.com/"
+    "registry": "https://npm.pkg.github.com/"
   },
   "keywords": [
     "svelte",
