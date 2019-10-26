@@ -18,6 +18,10 @@ jobs:
           scope: '@mpaupulaire4'
       - run: npm install
       - run: npm run test
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
 
   publish-npm:
     needs: test
