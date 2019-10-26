@@ -14,8 +14,6 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 8
-          registry-url: https://npm.pkg.github.com/
-          scope: '@mpaupulaire4'
       - run: npm install
       - run: npm run test
       - name: Dump GitHub context
