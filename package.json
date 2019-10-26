@@ -1,8 +1,14 @@
 {
   "name": "@mpaupulaire4/svelte-router",
+  "description": "A simple client side router written in svelte",
+  "version": "1.0.0",
+  "author": "Michel Paupulaire <mpaupulaire4@gmail.com>",
+  "repository": "git@github.com:mpaupulaire4/svelte-router.git",
+  "license": "MIT",
   "svelte": "src/index.js",
   "module": "dist/index.m.js",
   "main": "dist/index.js",
+  "private": false,
   "scripts": {
     "build": "rollup -c",
     "prepublishOnly": "npm run build"
@@ -30,11 +36,5 @@
   "dependencies": {
     "qs": "^6.9.0",
     "url-pattern": "^1.0.3"
-  },
-  "version": "1.0.0",
-  "description": "A simple client side router written in svelte",
-  "repository": "git@github.com:mpaupulaire4/svelte-router.git",
-  "author": "Michel Paupulaire <mpaupulaire4@gmail.com>",
-  "license": "MIT",
-  "private": false
+  }
 }
