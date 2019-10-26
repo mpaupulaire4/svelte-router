@@ -2,3 +2,5 @@
 node_modules
 package-lock.json
 dist/
+cypress/site/bundle.js
+cypress/site/bundle.js.map

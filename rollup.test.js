@@ -2,19 +2,28 @@ import svelte from 'rollup-plugin-svelte';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
-import pkg from './package.json';
+import { join } from 'path'
 
 export default {
-	input: 'src/index.js',
-	output: [
-		{ file: pkg.module, 'format': 'es' },
-		{ file: pkg.main, 'format': 'umd', name: 'SvelteRouter' }
-	],
+	input: 'cypress/site/app/index.js',
+	output: {
+		sourcemap: true,
+		format: 'iife',
+		name: 'app',
+		file: 'cypress/site/bundle.js'
+	},
 	plugins: [
+		{
+			resolveId(mod) {
+				if (mod === 'svelte-router') {
+					return join(process.cwd(), 'src', 'index.js')
+				}
+				return null
+			}
+		},
 		svelte({
 			immutable: true,
 			hydratable: true,
-			customElement: true
 		}),
 		resolve({
 			browser: true,

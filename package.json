@@ -11,13 +11,22 @@
   "private": false,
   "scripts": {
     "build": "rollup -c",
+    "test:build": "rollup --config rollup.test.js",
+    "test:serve": "sirv cypress/site --single --port 4000",
+    "test:start": "cypress run",
+    "test:site": "run-s test:build test:serve",
+    "test": "run-p --race test:site test:start",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
+    "cypress": "^3.5.0",
+    "npm-run-all": "^4.1.5",
     "rollup": "^1.11.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-svelte": "^5.0.0",
+    "rollup-plugin-terser": "^5.1.2",
+    "sirv": "^0.4.2",
     "svelte": "^3.0.0"
   },
   "publishConfig": {
