@@ -1,7 +1,7 @@
 {
   "name": "@mpaupulaire4/svelte-router",
   "description": "A simple client side router written in svelte",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Michel Paupulaire <mpaupulaire4@gmail.com>",
   "repository": "git@github.com:mpaupulaire4/svelte-router.git",
   "license": "MIT",
