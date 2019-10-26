@@ -1,4 +1,5 @@
 # Svelte Router
+![](https://github.com/mpaupulaire4/svelte-router/workflows/Tests/badge.svg)
 ![](https://github.com/mpaupulaire4/svelte-router/workflows/Build/badge.svg)
 
 A simple client side router written in svelte.

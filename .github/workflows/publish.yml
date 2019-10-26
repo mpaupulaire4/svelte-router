@@ -2,12 +2,13 @@ name: Build
 
 on:
   push:
-    branches:
-    - master
+    tags:
+    - v*
 
 jobs:
 
   test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -15,13 +16,11 @@ jobs:
         with:
           node-version: 8
       - run: npm install
+      - run: npm run build
       - run: npm run test
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
 
-  publish-npm:
+  publish:
+    name: 'Build and Publish'
     needs: test
     runs-on: ubuntu-latest
     steps:
