@@ -14,7 +14,6 @@ export default {
 		svelte({
 			immutable: true,
 			hydratable: true,
-			customElement: true
 		}),
 		resolve({
 			browser: true,

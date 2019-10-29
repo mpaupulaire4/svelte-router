@@ -3,31 +3,35 @@
   import { setContext, getContext } from 'svelte';
   import { derived } from 'svelte/store';
   import URLPattern from 'url-pattern';
-  import { route, query } from './Router.svelte';
 
-  export let preload = () => ({})
-  export let component = null
-  export let absolute = false
-  export let path = '*'
+  import { route, query, register, unregister } from './Router.svelte';
+  import Empty from './Empty.svelte';
 
-  const { segment, base } = getContext('svelte-router')
-  const newSegment = `${absolute ? '' : segment}/${path.replace(/^\//, '')}`
-  const pattern = new URLPattern(`${base}${newSegment}`)
+  export let preload = () => ({});
+  export let component = Empty;
+  export let path = '*';
+  export let exact = false;
+  export let absolute = false;
+
+  const { segment, base, ...rest } = getContext('svelte-router')
+  const newSegment = `${absolute ? '' : segment.replace(/\/$/, '')}/${path.replace(/^\//, '')}`
+  const pattern = new URLPattern(`${base}${newSegment}${exact ? '' : '*'}`)
   setContext('svelte-router', {
+    ...rest,
     base,
     segment: newSegment
   })
 
   $: params = pattern.match($route);
   $: promise = params ? preload({ params, query: $query, path: $route }) : {};
-
 </script>
+
 {#if params}
   {#await promise then data}
-    {#if component}
-      <svelte:component this="{component}" params="{params}" query="{$query}" route="{$route}" {...data} />
-    {:else}
+    <svelte:component this="{component}" params="{params}" query="{$query}" route="{$route}" {...data} >
       <slot params="{params}" query="{$query}" route="{$route}" {data} />
-    {/if}
+    </svelte:component>
   {/await}
+{:else if component !== Empty}
+  <slot />
 {/if}

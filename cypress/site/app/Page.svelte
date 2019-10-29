@@ -13,3 +13,4 @@
 <span> route: {route}</span>
 <pre id="params">{JSON.stringify(params, null, 2)}</pre>
 <pre id="query">{JSON.stringify(query, null, 2)}</pre>
+<slot />
