@@ -46,11 +46,11 @@
   }
 
   function hydrate({route, search, data}) {
-    for (let [key, config] of preloads.entries()) {
-      if (data[key]) {
-        config.data.set(data[key])
+    Object.keys(data).forEach((key) => {
+      if (preloads.has(key)) {
+        preloads.get(key).data.set(data[key])
       }
-    }
+    })
     route.set(state.route)
     query.set(qsparse(state.search))
   }
@@ -78,6 +78,7 @@
 
   async function navigate(url, push = true, _initial_data = {}) {
     const promises = [];
+    const data_hydrate = {};
     for (let [key, config] of preloads.entries()) {
       const params = config.pattern.match(url.pathname);
       if (params) {
@@ -86,8 +87,12 @@
           data = config.prefetch({ params, query: qsparse(url.search) })
         }
         if (data instanceof Promise) {
-          promises.push(data.then((res) => config.data.set(res)))
+          promises.push(data.then((res) => {
+            data_hydrate[key] = res;
+            config.data.set(res);
+          }))
         } else {
+          data_hydrate[key] = data;
           config.data.set(data)
         }
       }
@@ -98,10 +103,11 @@
       await Promise.all(promises);
       preloading.set(false);
     }
+    const state = { route: url.pathname, search: url.search, data: data_hydrate };
     if (push) {
-      history.pushState({ route: url.pathname, search: url.search }, '', url.href);
+      history.pushState(state, '', url.href);
     } else {
-      history.replaceState({ route: url.pathname, search: url.search }, '', url.href);
+      history.replaceState(state, '', url.href);
     }
     route.set(url.pathname);
     query.set(qsparse(url.search));
@@ -121,11 +127,11 @@
     query,
     route,
     preloading,
-    preload: () => {
-
-    },
-    goto: () => {
-
+    preload,
+    goto: (href, push = true) => {
+      const url = new URL(href, location.origin)
+      if (!isNavigable(url)) return;
+      return navigate(url, push)
     },
     go: history.go,
     back: history.back,

@@ -5,13 +5,14 @@ A simple client side router written in svelte.
 
 # TODO
 
+* [x] usable in srr components (no strict dependency on window)
+* [x] route preloading on link hover/mousedown
+* [x] preloading store
 * [ ] Docs
 * [ ] Tests
 * [ ] route errors (404 page and what not)
 * [ ] renderless redirect component
-* [ ] route preloading on link hover/mousedown
-* [ ] usable in srr components (no strict dependency on window)
-* [ ] Loading?
+* [ ] Switch component (renders the first path to match)
 
 ## Consuming components
 
