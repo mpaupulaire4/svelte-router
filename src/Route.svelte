@@ -2,33 +2,44 @@
 <script>
   import { setContext, getContext } from 'svelte';
 
-  import { route, query, register } from './Router.svelte';
+  import { register } from './Router.svelte';
   import Empty from './Empty.svelte';
 
   export let prefetch = null;
   export let component = Empty;
-  export let path = '*';
-  export let exact = false;
+  export let path = '';
+  export let exact = true;
   export let absolute = false;
-  export let key = null;
 
-  const { segment, base, } = getContext('svelte-router-internals')
-  const newSegment = `${absolute ? '' : segment.replace(/\/$/, '')}/${path.replace(/^\//, '')}`
-  setContext('svelte-router-internals', {
-    base,
-    segment: newSegment
-  })
+  const base = getContext('svelte-router-internals-base');
+  const parent = getContext('svelte-router-internals-parent');
+  const { route, query } = getContext('svelte-router');
 
-  const full_path = `${base}${newSegment}${exact ? '' : '*'}`;
+  const full_path = `${base}/${absolute ? paremt : ''}/${path}`;
 
-  const { data, pattern } = register(key, {
+  export let key = full_path;
+
+  const { data, match } = register({
+    key,
+    exact,
     path: full_path,
     prefetch,
   });
 
-  $: params = pattern.match($route);
+  $: params = match($route);
 </script>
 
-<svelte:component this="{params ? component : Empty}" params="{params}" query="{$query}" route="{$route}" {...$data} >
-  <slot params="{params}" query="{$query}" route="{$route}" data={$data} />
+<svelte:component
+  this="{params ? component : Empty}"
+  params="{params}"
+  query="{$query}"
+  path="{$route}"
+  data="{$data}"
+>
+  <slot
+    params="{params}"
+    query="{$query}"
+    path="{$route}"
+    data={$data}
+  />
 </svelte:component>
