@@ -1,13 +1,3 @@
-// import { parse } from 'qs';
-import { writable } from 'svelte/store';
-
-// export const qsparse = (search) => {
-//   return parse(search, {
-//     ignoreQueryPrefix: true,
-//     plainObjects: true
-//   })
-// }
-
 export function which(event) {
   return event.which === null ? event.button : event.which;
 }
@@ -70,4 +60,37 @@ export function parse(str, loose) {
     pattern: new RegExp('^' + pattern + (loose ? '(?=$|\/)' : '\/?$'), 'i')
   };
 	return (route) => exec(route, config)
+}
+
+
+export class Router {
+  constructor() {
+    this.routes = []
+  }
+
+  add(route, handler, middleware = false) {
+    const match = parse(route, true)
+    console.log('use', handler)
+    this.routes.push({
+      match,
+      middleware,
+      handler
+    })
+    return this
+  }
+
+  find(route) {
+		let i=0, tmp, arr=this.routes;
+    let handlers=[];
+    let just_middleware = true;
+		for (; i < arr.length; i++) {
+      tmp = arr[i];
+      let match = tmp.match(route)
+      if (match) {
+        just_middleware = just_middleware && tmp.middleware
+        handlers.push(tmp.handler(match))
+      }
+		}
+		return just_middleware ? [] : handlers;
+	}
 }

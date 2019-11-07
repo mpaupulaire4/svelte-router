@@ -1,4 +1,4 @@
-<svelte:options tag="svelte-route"/>
+<svelte:options tag="svelte-middleware"/>
 <script>
   import { setContext, getContext } from 'svelte';
 
@@ -14,13 +14,14 @@
   const parent = getContext('svelte-router-internals-parent');
   const { route, query } = getContext('svelte-router');
 
+  setContext('svelte-router-internals-parent', `${parent}/${path}`);
   const full_path = `${base}/${paremt}/${path}`;
 
   export let key = full_path;
 
   const { data, match } = register({
     key,
-    exact,
+    exact: false,
     path: full_path,
     prefetch,
   });
