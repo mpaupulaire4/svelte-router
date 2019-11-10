@@ -6,24 +6,38 @@
   const data_store = new Map();
   const stores = new Map();
   const preload_router = new Router();
+  const active_matchers = new Set();
   const empty_store = readable({});
 
   export const query = writable('');
   export const route = writable('');
   export const preloading = writable(false);
 
-
   export function register_route(full_path) {
     const match = parse(full_path);
-    return derived(route, (route) => {
-      return match(route);
+    return readable(null, (set) => {
+      active_matchers.add(match)
+      const unsub = route.subscribe((val) => set(match(val)));
+      return () => {
+        active_matchers.delete(match)
+        unsub()
+      }
     })
   }
 
   export function register_middleware(full_path) {
     const match = parse(full_path, true);
-    return derived(route, (route) => {
-      return match(route);
+    return readable(null, (set) => {
+      return route.subscribe((val) => {
+        let matched = false
+        for (let matcher of active_matchers) {
+          if (matcher(val)) {
+            matched = true;
+            break;
+          }
+        }
+        set(matched && match(val))
+      });
     })
   }
 
@@ -113,6 +127,7 @@
         data
       };
       history.replaceState(state, '', url.href);
+      hydrate(state)
     } else {
       navigate(location, false)
     }
