@@ -38,8 +38,8 @@ const parsers = new Map();
 export function parse(str, loose) {
   let arr = str.split(/\/+/);
 	arr[0] || arr.shift();
-  let path = `${arr.join('/')}:${!!loose}`;
-  if (parsers.has(path)) return parsers.get(path);
+  let key = `${arr.join('/')}:${!!loose}`;
+  if (parsers.has(key)) return parsers.get(key);
 	let c, o, tmp, ext, keys=[], pattern='';
 
 	while (tmp = arr.shift()) {
@@ -61,8 +61,8 @@ export function parse(str, loose) {
     keys,
     pattern: new RegExp('^' + pattern + (loose ? '(?=$|\/)' : '\/?$'), 'i')
   };
-  parsers.set(path, (route) => exec(route, config))
-	return parsers.get(path)
+  parsers.set(key, (route) => exec(route, config))
+	return parsers.get(key)
 }
 
 
@@ -73,14 +73,14 @@ export class Router {
 
   add(middleware, route, handler) {
     const match = parse(route, middleware)
-    const route = {
+    const data = {
       match,
       middleware,
       handler
     }
-    this.routes.push(route)
+    this.routes.push(data)
     return () => {
-      let index = this.routes.indexOf(route);
+      let index = this.routes.indexOf(data);
       if (index > -1) {
         this.routes.splice(index, 1);
       }

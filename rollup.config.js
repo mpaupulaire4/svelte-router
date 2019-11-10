@@ -19,6 +19,6 @@ export default {
 			browser: true,
 		}),
 		commonjs(),
-		terser()
+		// terser()
 	]
 };

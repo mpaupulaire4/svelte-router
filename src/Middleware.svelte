@@ -1,43 +1,29 @@
 <svelte:options tag="svelte-middleware"/>
 <script>
-  import { setContext, getContext } from 'svelte';
-  import Empty from './Empty.svelte';
+  import { getContext, setContext } from 'svelte';
 
-  export let prefetch = null;
+  import { register_middleware } from './Router.svelte';
+  import Empty from './Empty.svelte';
   export let component = Empty;
   export let path = '';
 
-  const { base, register_route } = getContext('svelte-router-internals-consts');
-  const parent = getContext('svelte-router-internals-parent');
-  const parse = getContext('svelte-router-internals-parse');
-  setContext('svelte-router-internals-parent', `${paremt}/${path}`)
   const { route, query } = getContext('svelte-router');
-
-  const full_path = `${base}/${paremt}/${path}`;
-
-  export let key = full_path;
-
-  const data = register_route(full_path, {
-    key,
-    prefetch,
-    middleware: true
-  });
-
-  const match = parse(full_path);
-  $: params = match($route);
+  const parent = getContext('svelte-router-internals-parent');
+  const full_path = `/${parent}/${path}`;
+  const params = register_middleware(full_path);
+  setContext('svelte-router-internals-parent', full_path);
 </script>
 
 <svelte:component
-  this="{params && component}"
-  params="{params}"
+  this="{$params ? component : Empty}"
+  params="{$params}"
   query="{$query}"
   path="{$route}"
-  {...$data}
+  {...$$props}
 >
   <slot
     params="{params}"
     query="{$query}"
     path="{$route}"
-    data={$data}
   />
 </svelte:component>

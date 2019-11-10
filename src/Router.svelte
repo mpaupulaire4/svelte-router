@@ -6,7 +6,7 @@
   const data_store = new Map();
   const stores = new Map();
   const preload_router = new Router();
-  const empty_store = readable(null);
+  const empty_store = readable({});
 
   export const query = writable('');
   export const route = writable('');
@@ -15,6 +15,13 @@
 
   export function register_route(full_path) {
     const match = parse(full_path);
+    return derived(route, (route) => {
+      return match(route);
+    })
+  }
+
+  export function register_middleware(full_path) {
+    const match = parse(full_path, true);
     return derived(route, (route) => {
       return match(route);
     })
@@ -78,14 +85,13 @@
 </script>
 <script>
   import { setContext, onMount } from 'svelte';
-  import { find_anchor, which, debounce, Router } from './utils'
+  import { find_anchor, which, debounce } from './utils'
 
   export let base = ''
   export let location = window.location
   export let history = window.history
   export let data = null
 
-  const preloads = new Router()
   const stores = new Map()
 
   function isNavigable(url) {
@@ -94,6 +100,9 @@
     if (url.pathname === location.pathname && url.search === location.search) return false;
     return true;
   }
+
+  route.set(location.pathname);
+  query.set(location.search);
 
   onMount(() => {
     if (!isNavigable(location)) return
