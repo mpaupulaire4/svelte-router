@@ -1,40 +1,38 @@
 <svelte:options tag="svelte-middleware"/>
 <script>
   import { setContext, getContext } from 'svelte';
-
-  import { register } from './Router.svelte';
   import Empty from './Empty.svelte';
 
   export let prefetch = null;
   export let component = Empty;
   export let path = '';
-  export let exact = true;
 
-  const {base} = getContext('svelte-router-internals-consts');
+  const { base, register_route } = getContext('svelte-router-internals-consts');
   const parent = getContext('svelte-router-internals-parent');
+  const parse = getContext('svelte-router-internals-parse');
+  setContext('svelte-router-internals-parent', `${paremt}/${path}`)
   const { route, query } = getContext('svelte-router');
 
-  setContext('svelte-router-internals-parent', `${parent}/${path}`);
   const full_path = `${base}/${paremt}/${path}`;
 
   export let key = full_path;
 
-  const { data, match } = register({
+  const data = register_route(full_path, {
     key,
-    exact: false,
-    path: full_path,
     prefetch,
+    middleware: true
   });
 
+  const match = parse(full_path);
   $: params = match($route);
 </script>
 
 <svelte:component
-  this="{params ? component : Empty}"
+  this="{params && component}"
   params="{params}"
   query="{$query}"
   path="{$route}"
-  data="{$data}"
+  {...$data}
 >
   <slot
     params="{params}"

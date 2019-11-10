@@ -33,12 +33,14 @@ function exec(path, result) {
   return out;
 }
 
+const parsers = new Map();
+
 export function parse(str, loose) {
-	if (str instanceof RegExp) {
-    return (route) => exec(route, { keys:false, pattern: str });
-  }
-	var c, o, tmp, ext, keys=[], pattern='', arr = str.split(/\/+/);
+  let arr = str.split(/\/+/);
 	arr[0] || arr.shift();
+  let path = `${arr.join('/')}:${!!loose}`;
+  if (parsers.has(path)) return parsers.get(path);
+	let c, o, tmp, ext, keys=[], pattern='';
 
 	while (tmp = arr.shift()) {
 		c = tmp[0];
@@ -59,7 +61,8 @@ export function parse(str, loose) {
     keys,
     pattern: new RegExp('^' + pattern + (loose ? '(?=$|\/)' : '\/?$'), 'i')
   };
-	return (route) => exec(route, config)
+  parsers.set(path, (route) => exec(route, config))
+	return parsers.get(path)
 }
 
 
@@ -68,27 +71,30 @@ export class Router {
     this.routes = []
   }
 
-  add(route, handler, middleware = false) {
-    const match = parse(route, true)
-    console.log('use', handler)
-    this.routes.push({
+  add(middleware, route, handler) {
+    const match = parse(route, middleware)
+    const route = {
       match,
       middleware,
       handler
-    })
-    return this
+    }
+    this.routes.push(route)
+    return () => {
+      let index = this.routes.indexOf(route);
+      if (index > -1) {
+        this.routes.splice(index, 1);
+      }
+    };
   }
 
   find(route) {
-		let i=0, tmp, arr=this.routes;
-    let handlers=[];
-    let just_middleware = true;
+		let i=0, tmp, arr=this.routes, handlers=[], just_middleware=true;
 		for (; i < arr.length; i++) {
       tmp = arr[i];
       let match = tmp.match(route)
       if (match) {
         just_middleware = just_middleware && tmp.middleware
-        handlers.push(tmp.handler(match))
+        handlers.push({params: match, handler: tmp.handler})
       }
 		}
 		return just_middleware ? [] : handlers;

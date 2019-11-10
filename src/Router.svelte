@@ -1,13 +1,80 @@
 <svelte:options tag="svelte-router"/>
 <script context="module">
-  import { readable, writable } from 'svelte/store';
-  import { parse } from './utils';
+  import { readable, writable, derived } from 'svelte/store';
+  import { parse, Router } from './utils';
+
+  const data_store = new Map();
+  const stores = new Map();
+  const preload_router = new Router();
+  const empty_store = readable(null);
 
   export const query = writable('');
   export const route = writable('');
   export const preloading = writable(false);
 
-  const empty_data = readable(true)
+
+  export function register_route(full_path) {
+    const match = parse(full_path);
+    return derived(route, (route) => {
+      return match(route);
+    })
+  }
+
+  export function register_preload(path, fetch, {key, initial, middleware = false} = {}) {
+    if (!fetch) return empty_store
+    if (key && stores.has(key)) return stores.get(key)
+    const store = readable(initial, (set) => {
+      return preload_router.add(middleware, path, { set, fetch, key })
+    })
+    if (key) stores.set(key, store)
+    return store
+  }
+
+  function preload(pathname, query = '') {
+    const key = `${pathname}${query}`;
+    if (data_store.has(key)) return data_store.get(key);
+    const handlers = preload_router.find(pathname).map(async ({ params, handler: { set, fetch, key } }) => {
+      const data = await fetch({ params, path: pathname, query });
+      return () => {
+        set(data)
+        return { key, data }
+      };
+    });
+    data_store.set(key, handlers);
+    return handlers
+  }
+
+  async function navigate(url, push = true) {
+    const data_hydrate = {};
+    const promises = preload(url.pathname, url.query);
+    data_store.clear();
+    if (promises.length) {
+      preloading.set(true);
+      const cbs = await Promise.all(promises)
+      cbs.forEach((cb) => {
+        const { key, data } = cb()
+        data_hydrate[key] = data
+      })
+      preloading.set(false);
+    }
+    route.set(url.pathname);
+    query.set(url.search);
+    const state = { route: url.pathname, search: url.search, data: data_hydrate };
+    if (push) {
+      history.pushState(state, '', url.href);
+    } else {
+      history.replaceState(state, '', url.href);
+    }
+  }
+
+  function hydrate({route, search, data}) {
+    route.set(state.route)
+    query.set(state.search)
+    preload_router
+      .find(route)
+      .forEach(({ handler: { set, key } }) => set(data[key]));
+  }
+
 </script>
 <script>
   import { setContext, onMount } from 'svelte';
@@ -21,75 +88,11 @@
   const preloads = new Router()
   const stores = new Map()
 
-  function register_route(route, { key, prefetch, middleware } = {}) {
-    if (stores.has(key)) return stores.get(key);
-    if (!prefetch) {
-      return empty_data
-    }
-    const store = writable((data && data[key]) || false)
-    stores.set(key, store)
-    preloads.add(route, (params) => ({ key, prefetch, store, params }), middleware)
-    return store
-  }
-
   function isNavigable(url) {
     if (url.origin !== location.origin) return false;
     if (!url.pathname.startsWith(base)) return false;
     if (url.pathname === location.pathname && url.search === location.search) return false;
     return true;
-  }
-
-  function hydrate({route, search, data}) {
-    preloads.find(route).forEach(({ key, store }) => {
-      store.set(data[key])
-    })
-    route.set(state.route)
-    query.set(state.search)
-  }
-
-  const route_data = new Map();
-  function preload(pathname, query = '') {
-    if (route_data.has(pathname)) return route_data.get(pathname);
-    const promises = preloads.find(pathname)
-    .map(async ({ key, prefetch, params, store }) => {
-      const data = await prefetch({params, path: pathname, query});
-      return {
-        key,
-        data,
-        set: () => store.set(data)
-      }
-    })
-    route_data.set(pathname, promises)
-    return promises
-  }
-
-
-  async function navigate(url, push = true) {
-    const data_hydrate = {};
-    let promises = [];
-    if (route_data.has(url.pathname)) {
-      promises = route_data.get(url.pathname)
-    } else {
-      promises = preload(url.pathname, url.query)
-    }
-    route_data.clear();
-    if (promises.length) {
-      preloading.set(true);
-      const cbs = await Promise.all(promises)
-      cbs.forEach(({key, data, set}) => {
-        data_hydrate[key] = data
-        set();
-      })
-      preloading.set(false);
-    }
-    route.set(url.pathname);
-    query.set(url.search);
-    const state = { route: url.pathname, search: url.search, data: data_hydrate };
-    if (push) {
-      history.pushState(state, '', url.href);
-    } else {
-      history.replaceState(state, '', url.href);
-    }
   }
 
   onMount(() => {
@@ -106,8 +109,7 @@
     }
   })
 
-  setContext('svelte-router-internals-consts', { base, register_route })
-  setContext('svelte-router-internals-parent', '')
+  setContext('svelte-router-internals-parent', base)
 
   setContext('svelte-router', {
     query,
