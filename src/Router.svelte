@@ -6,38 +6,16 @@
   const data_store = new Map();
   const stores = new Map();
   const preload_router = new Router();
-  const active_matchers = new Set();
   const empty_store = readable({});
 
-  export const query = writable('');
-  export const route = writable('');
+  export const query = writable(null);
+  export const route = writable(null);
   export const preloading = writable(false);
 
   export function register_route(full_path) {
     const match = parse(full_path);
     return readable(null, (set) => {
-      active_matchers.add(match)
-      const unsub = route.subscribe((val) => set(match(val)));
-      return () => {
-        active_matchers.delete(match)
-        unsub()
-      }
-    })
-  }
-
-  export function register_middleware(full_path) {
-    const match = parse(full_path, true);
-    return readable(null, (set) => {
-      return route.subscribe((val) => {
-        let matched = false
-        for (let matcher of active_matchers) {
-          if (matcher(val)) {
-            matched = true;
-            break;
-          }
-        }
-        set(matched && match(val))
-      });
+      return route.subscribe((val) => set(match(val)));
     })
   }
 
@@ -88,12 +66,12 @@
     }
   }
 
-  function hydrate({route, search, data}) {
+  function hydrate(state) {
     route.set(state.route)
     query.set(state.search)
     preload_router
       .find(route)
-      .forEach(({ handler: { set, key } }) => set(data[key]));
+      .forEach(({ handler: { set, key } }) => set(state.data[key]));
   }
 
 </script>
@@ -104,7 +82,6 @@
   export let base = ''
   export let location = window.location
   export let history = window.history
-  export let data = null
 
   const stores = new Map()
 
@@ -115,25 +92,8 @@
     return true;
   }
 
-  route.set(location.pathname);
-  query.set(location.search);
-
-  onMount(() => {
-    if (!isNavigable(location)) return
-    if (data) {
-      const state = {
-        route: location.pathname,
-        query: location.query,
-        data
-      };
-      history.replaceState(state, '', url.href);
-      hydrate(state)
-    } else {
-      navigate(location, false)
-    }
-  })
-
   setContext('svelte-router-internals-parent', base)
+  setContext('svelte-router-internals-parse', parse)
 
   setContext('svelte-router', {
     query,
@@ -149,6 +109,8 @@
     back: history.back,
     forward: history.forward,
   })
+
+  if (location.pathname.startsWith(base)) navigate(location, false);
 
   function handle_click(event) {
     // Adapted from https://github.com/visionmedia/page.js
