@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import pkg from '../package.json';
+const fs = require('fs');
+const path = require('path');
+const pkg = require('../package.json');
 
 function filename(file) {
 	return file.replace(path.extname(file), '')
@@ -45,36 +45,40 @@ function get_routes(folder) {
 
 function parse_routes(routes, root, key = '') {
 	const imports = []
+	const scripts = []
 	const start = []
 	const end = []
 	if (routes['$layout']) {
 		const location = routes['$layout']
 		const name = camelRoute(filename(remove_root(location, root))).replace('$l', 'L')
 		imports.push(`import ${name} from "${location}";`)
-		start.push(`<Route ${key ? `path="${key}" ` : ''}component="{${name}}">`)
-		end.unshift(`</Route>`)
+		start.push(`<Middleware path="${key.replace('index', '').replace(/\$/g, ':')}" component="{${name}}" props="{${name}_props}">`)
+		end.unshift(`</Middleware>`)
+		scripts.push(`export let ${name}_props = null;`)
 		const { $layout, ...rest } = routes;
 		routes = rest
 	}
-	const res = Object.keys(routes).reduce(({imports, render}, routeKey) => {
+	const res = Object.keys(routes).reduce(({imports, render, scripts}, routeKey) => {
 		if (typeof routes[routeKey] === 'string') {
 			const location = routes[routeKey]
 			const name = camelRoute(filename(remove_root(location, root)))
-			const route = remove_root(filename(location), root).replace('index', '')
+			const route = routeKey.replace('index', '').replace(/\$/g, ':')
 			imports.push(`import ${name} from "${location}";`)
-			render.push(`<Route ${route ? `path="${route}" ` : ''}component="{${name}}" exact/>`)
+			scripts.push(`export let ${name}_props = null;`)
+			render.push(`<Route path="${route}" component="{${name}}" props="{${name}_props}" />`)
 		} else {
 			const res = parse_routes(routes[routeKey], root, routeKey)
 			imports.push(...res.imports)
 			render.push(...res.render)
+			scripts.push(...res.scripts)
 		}
-		return { imports, render }
-	}, { imports, render: start })
+		return { imports, render, scripts }
+	}, { imports, render: start, scripts })
 	res.render.push(...end)
 	return res
 }
 
-export default function SvelteFileRouter({
+module.exports = function SvelteFileRouter({
   rootDir = './src/routes',
   virtual = `${pkg.name}/Routes.svelte`
 } = {}) {
@@ -83,28 +87,26 @@ export default function SvelteFileRouter({
 	return {
 		name: 'svelte-file-router',
 		resolveId(id) {
-			if (id === virtual) {
-				return id
-			}
-			return null
+			return id === virtual ? id : null
 		},
 		load(id) {
 			if (id !== virtual) return null
 			const routes = get_routes(rootDir)
-			const { imports, render } = parse_routes(routes, rootDir)
+			const { imports, render, scripts } = parse_routes(routes, rootDir)
 			const ret = [
 				'<script>',
-				`import { Route, Router } from '${pkg.name}';`,
+				`import { Route, Router, Middleware } from '${pkg.name}';`,
 				...imports,
 				'export let location;',
 				'export let data;',
 				'export let history;',
+				'',
+				...scripts,
 				'</script>',
 				'<Router {location} {data} {history} >',
 				...render,
 				'</Router>'
 			].join('\n')
-			console.log(ret)
 			return ret
 		}
 	}

@@ -5,7 +5,7 @@
   import Empty from './Empty.svelte';
   export let component = Empty;
   export let path = '';
-  export let data = {};
+  export let props = {};
 
   const { route, query } = getContext('svelte-router');
   const parent = getContext('svelte-router-internals-parent');
@@ -21,7 +21,7 @@
   params="{params}"
   query="{$query}"
   path="{$route}"
-  {...data}
+  {...props}
 >
   <slot
     params="{params}"
