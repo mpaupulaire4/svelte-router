@@ -2,7 +2,7 @@
   export let params;
   export let path;
   export let query;
-  export let data;
+  export let data = {};
 </script>
 
 <svelte:head>
