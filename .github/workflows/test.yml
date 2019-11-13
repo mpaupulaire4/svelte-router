@@ -24,7 +24,11 @@ jobs:
           key: ${{ runner.OS }}-build-${{ hashFiles('**/yarn.lock') }}
       - name: Install Dependencies
         run: npm install
+        env:
+          CYPRESS_CACHE_FOLDER: node_modules/cypress/cache
       - name: Build
         run: npm run build
       - name: Test
         run: npm run test
+        env:
+          CYPRESS_CACHE_FOLDER: node_modules/cypress/cache

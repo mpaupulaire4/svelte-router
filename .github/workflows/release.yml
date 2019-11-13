@@ -18,8 +18,12 @@ jobs:
           path: node_modules
           key: ${{ runner.OS }}-build-${{ hashFiles('**/yarn.lock') }}
       - run: npm install
+        env:
+          CYPRESS_CACHE_FOLDER: node_modules/cypress/cache
       - run: npm run build
       - run: npm run test
+        env:
+          CYPRESS_CACHE_FOLDER: node_modules/cypress/cache
   release:
     name: Release
     runs-on: ubuntu-18.04
@@ -37,6 +41,8 @@ jobs:
           key: ${{ runner.OS }}-build-${{ hashFiles('**/yarn.lock') }}
       - name: Install dependencies
         run: npm install
+        env:
+          CYPRESS_CACHE_FOLDER: node_modules/cypress/cache
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -59,6 +65,8 @@ jobs:
           path: node_modules
           key: ${{ runner.OS }}-build-${{ hashFiles('**/yarn.lock') }}
       - run: npm install
+        env:
+          CYPRESS_CACHE_FOLDER: node_modules/cypress/cache
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
