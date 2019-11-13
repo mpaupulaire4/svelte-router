@@ -41,12 +41,14 @@ function get_routes(folder, parent = '') {
 			}
 		} else if (name.match(/\$layout$/i)) {
 			acc['$layout'] = {
+				type: 'middleware',
 				file: path.join(folder, file),
 				name: `${parent}${name}`.replace('$', ''),
 				path: ''
 			}
 		} else {
 			acc.push({
+				type: 'route',
 				file: path.join(folder, file),
 				name: `${parent}${name}`.replace('$', ''),
 				path: name.replace('index', '').replace(/\$/g, ':'),
@@ -93,7 +95,8 @@ function parse_routes(routes, root, key = '') {
 
 module.exports = function SvelteFileRouter({
   rootDir = './src/routes',
-  virtual = `${pkg.name}/Routes.svelte`
+	virtual = `${pkg.name}/Routes.svelte`,
+	ssr = false,
 } = {}) {
 	rootDir = path.join(process.cwd(), rootDir)
 

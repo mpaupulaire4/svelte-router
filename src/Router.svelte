@@ -1,10 +1,12 @@
 <svelte:options tag="svelte-router"/>
 <script context="module">
-  import { readable, writable, derived } from 'svelte/store';
+  import { readable, writable, get } from 'svelte/store';
   import { parse, Router } from './utils';
 
-  const data_store = new Map();
-  const stores = new Map();
+  const data_cache = new Map();
+  const fetch_cache = new Map();
+  const routes_cache = new Map();
+  const routes = [];
   const preload_router = new Router();
   const empty_store = readable({});
 
@@ -12,26 +14,36 @@
   export const route = writable(null);
   export const preloading = writable(false);
 
-  export function register_route(full_path) {
-    const match = parse(full_path);
-    return readable(null, (set) => {
-      return route.subscribe((val) => set(match(val)));
+  export function register_route(full_path, middleware = false) {
+    const match = parse(full_path, middleware);
+    if (routes_cache.has(match)) return routes_cache.get(match);
+    const store = readable(null, (set) => {
+      const def = { set, match, middleware }
+      routes.push(def)
+      return () => {
+        const i = routes.findIndex((r) => r === def)
+        if (i > -1) {
+          routes.splice(i, 1)
+        }
+      }
     })
+    routes_cache.set(match, store)
+    return store
   }
 
   export function register_preload(path, fetch, {key, initial, middleware = false} = {}) {
     if (!fetch) return empty_store
-    if (key && stores.has(key)) return stores.get(key)
+    if (key && fetch_cache.has(key)) return fetch_cache.get(key)
     const store = readable(initial, (set) => {
       return preload_router.add(middleware, path, { set, fetch, key })
     })
-    if (key) stores.set(key, store)
+    if (key) fetch_cache.set(key, store)
     return store
   }
 
   function preload(pathname, query = '') {
     const key = `${pathname}${query}`;
-    if (data_store.has(key)) return data_store.get(key);
+    if (data_cache.has(key)) return data_cache.get(key);
     const handlers = preload_router.find(pathname).map(async ({ params, handler: { set, fetch, key } }) => {
       const data = await fetch({ params, path: pathname, query });
       return () => {
@@ -39,14 +51,14 @@
         return { key, data }
       };
     });
-    data_store.set(key, handlers);
+    data_cache.set(key, handlers);
     return handlers
   }
 
   async function navigate(url, push = true) {
     const data_hydrate = {};
     const promises = preload(url.pathname, url.query);
-    data_store.clear();
+    data_cache.clear();
     if (promises.length) {
       preloading.set(true);
       const cbs = await Promise.all(promises)
@@ -56,6 +68,7 @@
       })
       preloading.set(false);
     }
+    routes.forEach(({ match, set }) => set(match(url.pathname)))
     route.set(url.pathname);
     query.set(url.search);
     const state = { route: url.pathname, search: url.search, data: data_hydrate };
@@ -69,6 +82,7 @@
   function hydrate(state) {
     route.set(state.route)
     query.set(state.search)
+    routes.forEach(({ match, set }) => set(match(state.route)))
     preload_router
       .find(route)
       .forEach(({ handler: { set, key } }) => set(state.data[key]));
@@ -83,17 +97,16 @@
   export let location = window.location
   export let history = window.history
 
-  const stores = new Map()
-
   function isNavigable(url) {
     if (url.origin !== location.origin) return false;
     if (!url.pathname.startsWith(base)) return false;
     if (url.pathname === location.pathname && url.search === location.search) return false;
-    return true;
+    return routes.some(({ middleware, match }) => {
+      return !middleware && match(url.pathname)
+    });
   }
 
   setContext('svelte-router-internals-parent', base)
-  setContext('svelte-router-internals-parse', parse)
 
   setContext('svelte-router', {
     query,
