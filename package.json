@@ -48,11 +48,4 @@
   "dependencies": {
     "lodash.template": "^4.5.0"
   },
-  "release": {
-    "plugins": [
-      "@semantic-release/commit-analyzer",
-      "@semantic-release/release-notes-generator",
-      "@semantic-release/github"
-    ]
-  }
 }
