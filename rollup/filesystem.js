@@ -120,6 +120,7 @@ module.exports = function SvelteFileRouter({
 				...render,
 				'</Router>'
 			].join('\n')
+			console.log(imports)
 			return ret
 		}
 	}
