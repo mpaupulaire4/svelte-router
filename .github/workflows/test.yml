@@ -18,15 +18,11 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 8
-              - name: Cache node modules
-      - uses: actions/cache@v1
+      - name: Cache node modules
+        uses: actions/cache@v1
         with:
           path: node_modules
-          key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-build-${{ env.cache-name }}-
-            ${{ runner.OS }}-build-
-            ${{ runner.OS }}-
+          key: ${{ runner.OS }}-build-${{ hashFiles('**/yarn.lock') }}
       - name: Install Dependencies
         run: npm install
       - name: Build
