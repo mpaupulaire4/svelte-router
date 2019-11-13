@@ -105,7 +105,6 @@ module.exports = function SvelteFileRouter({
 		load(id) {
 			if (id !== virtual) return null
 			const routes = get_routes(rootDir)
-			console.log(routes)
 			const { imports, render, scripts } = parse_routes(routes, rootDir)
 			const ret = [
 				'<script>',
