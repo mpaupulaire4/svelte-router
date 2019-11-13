@@ -9,7 +9,6 @@ on:
     - master
 
 jobs:
-
   test:
     name: 'Tests'
     runs-on: ubuntu-latest
