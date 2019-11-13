@@ -19,7 +19,7 @@ function camelRoute(route) {
 		.replace(/^([a-z])/, (_, $1) => $1.toUpperCase())
 }
 
-function get_routes(folder) {
+function get_routes(folder, parent = '') {
 	const files = fs.readdirSync(folder)
 	return files.reduce((acc, file) => {
 		const name = filename(file)
@@ -28,19 +28,32 @@ function get_routes(folder) {
 		}
 		const stats = fs.lstatSync(path.join(folder, file))
 		if (stats.isDirectory()) {
-			const routes = get_routes(path.join(folder, file))
+			const routes = get_routes(path.join(folder, file), name)
+			// console.log(routes)
 			if (routes['$layout']) {
-				acc[name] = routes
+				routes['$layout'].path = name.replace('index', '').replace(/\$/g, ':')
+				acc.push(routes)
 			} else {
-				for (let key in routes) {
-					acc[`${name}/${key}`] = routes[key]
-				}
+				acc.push(...routes.map((route) => {
+					route.path = `${name.replace('index', '').replace(/\$/g, ':')}/${route.path}`
+					return route
+				}))
+			}
+		} else if (name.match(/\$layout$/i)) {
+			acc['$layout'] = {
+				file: path.join(folder, file),
+				name: `${parent}${name}`.replace('$', ''),
+				path: ''
 			}
 		} else {
-			acc[name] = path.join(folder, file)
+			acc.push({
+				file: path.join(folder, file),
+				name: `${parent}${name}`.replace('$', ''),
+				path: name.replace('index', '').replace(/\$/g, ':'),
+			})
 		}
 		return acc
-	}, {});
+	}, []);
 }
 
 function parse_routes(routes, root, key = '') {
@@ -92,6 +105,7 @@ module.exports = function SvelteFileRouter({
 		load(id) {
 			if (id !== virtual) return null
 			const routes = get_routes(rootDir)
+			console.log(routes)
 			const { imports, render, scripts } = parse_routes(routes, rootDir)
 			const ret = [
 				'<script>',
