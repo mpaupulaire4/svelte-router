@@ -23,7 +23,7 @@ const ssr = {
   >
   `.trim()),
 }
-const client = {
+const client_split = {
   imprt: template(''),
   script: template(`
 const <%= name %>_store = register_preload('<%= path %>', async (...args) => {
@@ -52,7 +52,33 @@ const <%= name %>_store = register_preload('<%= path %>', async (...args) => {
 `.trim()),
 }
 
+const client = {
+  imprt: template('import * as ${ name } from "${ file }";'),
+  script: template(`
+export let <%= name %>_props = null;
+const <%= name %>_store = register_preload('<%= path %>', <%= name %>.prefetch, { initial: <%= name %>_props })
+`.trim()),
+  middleware: template(`
+  <Middleware
+    path="<%= path %>"
+    component="{<%= name %>.default}"
+    props="{$<%= name %>_store}"
+  >
+    <% children.forEach((chhild) => { %>
+      <%= chhild %>
+    <% }) %>
+  <Middleware />
+`.trim()),
+  route: template(`
+<Route
+  path="<%= path %>"
+  component="{<%= name %>.default}"
+  props="{$<%= name %>_store}"
+/å>
+`.trim()),
+}
+
 module.exports = {
   ssr,
-  client,
+  client_split,
 }

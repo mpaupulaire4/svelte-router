@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const pkg = require('../package.json');
+const templates = require('./templates');
 
 function filename(file) {
 	return file.replace(path.extname(file), '')
@@ -12,57 +13,67 @@ function remove_root(route, root) {
 
 function camelRoute(route) {
 	return route
-		.replace('$' , '')
+		.replace('$', '')
 		.replace(/\/([a-z])?/g, (m, $1) => {
 			return $1 ? $1.toUpperCase() : ''
 		})
 		.replace(/^([a-z])/, (_, $1) => $1.toUpperCase())
 }
 
-function get_routes(folder, parent = '') {
+function get_routes(folder, parentname = '', parentpath = '') {
 	const files = fs.readdirSync(folder)
-	return files.reduce((acc, file) => {
-		const name = filename(file)
-		if (file.indexOf('_') == 0 || !name.match(/^\$?[a-z_-]+$/i)) {
+	return [].concat(files.reduce((acc, file) => {
+		let name = filename(file)
+		if (file.indexOf('_') == 0 || !name.match(/^\$?[a-z_-]+!?$/i)) {
 			return acc
 		}
+		const full_name = `${parentname}${name}`.replace('!', '')
+		const route_path = name
+			.replace(/^(index|!)$/gi, '')
+			.replace(/\$/g, ':')
 		const stats = fs.lstatSync(path.join(folder, file))
 		if (stats.isDirectory()) {
-			const routes = get_routes(path.join(folder, file), name)
-			// console.log(routes)
-			if (routes['$layout']) {
-				routes['$layout'].path = name.replace('index', '').replace(/\$/g, ':')
-				acc.push(routes)
+			const routes = get_routes(path.join(folder, file), name, route_path)
+			if (routes.type === 'middleware') {
+				[].push.call((acc.children || acc), routes)
 			} else {
-				acc.push(...routes.map((route) => {
-					route.path = `${name.replace('index', '').replace(/\$/g, ':')}/${route.path}`
+				[].push.call((acc.children || acc), ...routes.map((route) => {
+					route.path = `${route_path}/${route.path}`
 					return route
 				}))
 			}
-		} else if (name.match(/\$layout$/i)) {
-			acc['$layout'] = {
+		} else if (name.match(/^\$layout$/i)) {
+			return {
 				type: 'middleware',
+				split: !!name.match(/!$/),
 				file: path.join(folder, file),
-				name: `${parent}${name}`.replace('$', ''),
-				path: ''
+				name: full_name,
+				path: parentpath,
+				children: acc
 			}
 		} else {
-			acc.push({
+			[].push.call((acc.children || acc), {
 				type: 'route',
+				split: !!name.match(/!$/),
 				file: path.join(folder, file),
-				name: `${parent}${name}`.replace('$', ''),
-				path: name.replace('index', '').replace(/\$/g, ':'),
+				name: full_name,
+				path: route_path,
 			})
 		}
 		return acc
-	}, []);
+	}, []));
 }
 
 function parse_routes(routes, root, key = '') {
 	const imports = []
 	const scripts = []
-	const start = []
-	const end = []
+	const render = []
+	routes.map((route) => {
+		console.log(route)
+		switch(route.type) {
+
+		}
+	})
 	if (routes['$layout']) {
 		const location = routes['$layout']
 		const name = camelRoute(filename(remove_root(location, root))).replace('$l', 'L')
@@ -88,7 +99,7 @@ function parse_routes(routes, root, key = '') {
 			scripts.push(...res.scripts)
 		}
 		return { imports, render, scripts }
-	}, { imports, render: start, scripts })
+	}, { imports, render, scripts })
 	res.render.push(...end)
 	return res
 }
@@ -108,10 +119,12 @@ module.exports = function SvelteFileRouter({
 		load(id) {
 			if (id !== virtual) return null
 			const routes = get_routes(rootDir)
-			const { imports, render, scripts } = parse_routes(routes, rootDir)
+			console.log(JSON.stringify(routes, null, 2))
+
+			const { imports, render, scripts } = parse_routes(routes)
 			const ret = [
 				'<script>',
-				`import { Route, Router, Middleware } from '${pkg.name}';`,
+				`import { Route, Router, Middleware, AsyncComponent } from '${pkg.name}';`,
 				...imports,
 				'export let location;',
 				'export let data;',

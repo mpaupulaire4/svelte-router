@@ -123,7 +123,9 @@
     forward: history.forward,
   })
 
-  if (location.pathname.startsWith(base)) navigate(location, false);
+  onMount(() => {
+    if (location.pathname.startsWith(base)) navigate(location, false);
+  })
 
   function handle_click(event) {
     // Adapted from https://github.com/visionmedia/page.js
