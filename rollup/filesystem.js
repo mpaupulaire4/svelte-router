@@ -1,23 +1,11 @@
 const fs = require('fs');
 const path = require('path');
+const { compile } = require('svelte/compiler')
 const pkg = require('../package.json');
 const templates = require('./templates');
 
 function filename(file) {
 	return file.replace(path.extname(file), '')
-}
-
-function remove_root(route, root) {
-	return route.replace(root, '')
-}
-
-function camelRoute(route) {
-	return route
-		.replace('$', '')
-		.replace(/\/([a-z])?/g, (m, $1) => {
-			return $1 ? $1.toUpperCase() : ''
-		})
-		.replace(/^([a-z])/, (_, $1) => $1.toUpperCase())
 }
 
 function get_routes(folder, parentname = '', parentpath = '') {
@@ -27,13 +15,16 @@ function get_routes(folder, parentname = '', parentpath = '') {
 		if (file.indexOf('_') == 0 || !name.match(/^\$?[a-z_-]+!?$/i)) {
 			return acc
 		}
-		const full_name = `${parentname}${name}`.replace('!', '')
+		const full_name = `${parentname}$${name}`
+			.replace(/\$+([a-z])/g, (_, $1) => $1.toUpperCase())
+			.replace('!', '')
 		const route_path = name
-			.replace(/^(index|!)$/gi, '')
+			.replace(/(^index|!)$/g, '')
 			.replace(/\$/g, ':')
+			.toLowerCase()
 		const stats = fs.lstatSync(path.join(folder, file))
 		if (stats.isDirectory()) {
-			const routes = get_routes(path.join(folder, file), name, route_path)
+			const routes = get_routes(path.join(folder, file), full_name, route_path)
 			if (routes.type === 'middleware') {
 				[].push.call((acc.children || acc), routes)
 			} else {
@@ -64,44 +55,37 @@ function get_routes(folder, parentname = '', parentpath = '') {
 	}, []));
 }
 
-function parse_routes(routes, root, key = '') {
+function parse_routes(routes, ssr = false) {
 	const imports = []
 	const scripts = []
 	const render = []
-	routes.map((route) => {
-		console.log(route)
-		switch(route.type) {
-
+	routes.forEach((route) => {
+		const template = ssr ?
+			templates.ssr :
+			route.split ?
+				templates.client_split :
+				templates.client
+		imports.push(template.imports(route))
+		scripts.push(template.scripts(route))
+		if (route.children && route.children.length) {
+			const children = parse_routes(route.children);
+			imports.push(children.imports)
+			scripts.push(children.scripts)
+			render.push(
+				template.middleware({
+					...route,
+					children: children.render
+				})
+			)
+		} else {
+			render.push(template.route(route))
 		}
 	})
-	if (routes['$layout']) {
-		const location = routes['$layout']
-		const name = camelRoute(filename(remove_root(location, root))).replace('$l', 'L')
-		imports.push(`import ${name} from "${location}";`)
-		start.push(`<Middleware path="${key.replace('index', '').replace(/\$/g, ':')}" component="{${name}}" props="{${name}_props}">`)
-		end.unshift(`</Middleware>`)
-		scripts.push(`export let ${name}_props = null;`)
-		const { $layout, ...rest } = routes;
-		routes = rest
+	return {
+		imports: imports.join('\n'),
+		scripts: scripts.join('\n'),
+		render: render.join('\n')
 	}
-	const res = Object.keys(routes).reduce(({imports, render, scripts}, routeKey) => {
-		if (typeof routes[routeKey] === 'string') {
-			const location = routes[routeKey]
-			const name = camelRoute(filename(remove_root(location, root)))
-			const route = routeKey.replace('index', '').replace(/\$/g, ':')
-			imports.push(`import ${name} from "${location}";`)
-			scripts.push(`export let ${name}_props = null;`)
-			render.push(`<Route path="${route}" component="{${name}}" props="{${name}_props}" />`)
-		} else {
-			const res = parse_routes(routes[routeKey], root, routeKey)
-			imports.push(...res.imports)
-			render.push(...res.render)
-			scripts.push(...res.scripts)
-		}
-		return { imports, render, scripts }
-	}, { imports, render, scripts })
-	res.render.push(...end)
-	return res
 }
 
 module.exports = function SvelteFileRouter({
@@ -119,25 +103,23 @@ module.exports = function SvelteFileRouter({
 		load(id) {
 			if (id !== virtual) return null
 			const routes = get_routes(rootDir)
-			console.log(JSON.stringify(routes, null, 2))
-
 			const { imports, render, scripts } = parse_routes(routes)
 			const ret = [
 				'<script>',
 				`import { Route, Router, Middleware, AsyncComponent } from '${pkg.name}';`,
-				...imports,
+				imports,
+				'',
 				'export let location;',
-				'export let data;',
 				'export let history;',
 				'',
-				...scripts,
+				scripts,
 				'</script>',
-				'<Router {location} {data} {history} >',
-				...render,
+				'<Router {location} {history} >',
+				render,
 				'</Router>'
 			].join('\n')
-			console.log(imports)
-			return ret
+			console.log(ret)
+			return ret;
 		}
 	}
 }
