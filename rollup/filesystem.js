@@ -16,11 +16,14 @@ function isPrefetchVar(var_meta) {
 	)
 }
 
-function get_routes(folder, parentname = '', parentpath = '') {
+function get_routes(folder, extensions = [], parentname = '', parentpath = '') {
 	const files = fs.readdirSync(folder)
-	return [].concat(files.reduce((acc, file) => {
+	return files.reduce((acc, file) => {
 		let name = filename(file)
-		if (file.indexOf('_') == 0 || !name.match(/^\$?[a-z_-]+!?$/i)) {
+		if (
+			file.indexOf('_') == 0 ||
+			!name.match(/^\$?[a-z_-]+!?$/i)
+		) {
 			return acc
 		}
 		const full_name = `${parentname}$${name}`
@@ -33,8 +36,9 @@ function get_routes(folder, parentname = '', parentpath = '') {
 		const split = !!name.match(/!$/);
 		const stats = fs.lstatSync(path.join(folder, file))
 		if (stats.isDirectory()) {
-			const routes = get_routes(path.join(folder, file), full_name, route_path)
+			const routes = get_routes(path.join(folder, file), extensions, full_name, route_path)
 			if (routes.type === 'middleware') {
+				routes.split = split || routes.split;
 				[].push.call((acc.children || acc), routes)
 			} else {
 				[].push.call((acc.children || acc), ...routes.map((route) => {
@@ -43,7 +47,7 @@ function get_routes(folder, parentname = '', parentpath = '') {
 					return route
 				}))
 			}
-		} else {
+		} else if (extensions.includes(path.extname(file))) {
 			const file_path = path.join(folder, file);
 			const hasPrefetch = compile(
 				fs.readFileSync(file_path, 'utf8'),
@@ -70,7 +74,7 @@ function get_routes(folder, parentname = '', parentpath = '') {
 			})
 		}
 		return acc
-	}, []));
+	}, []);
 }
 
 function parse_routes(routes, ssr = false) {
@@ -118,6 +122,7 @@ module.exports = function SvelteFileRouter({
   rootDir = './src/routes',
 	virtual = `${pkg.name}/Routes.svelte`,
 	ssr = false,
+	extensions = ['.svelte', '.html']
 } = {}) {
 	rootDir = path.join(process.cwd(), rootDir)
 
@@ -128,9 +133,9 @@ module.exports = function SvelteFileRouter({
 		},
 		load(id) {
 			if (id !== virtual) return null
-			const routes = get_routes(rootDir)
+			const routes = [].concat(get_routes(rootDir, extensions));
 			const { imports, render, scripts, hasSplits, hasPrefetches } = parse_routes(routes, ssr)
-			const ret = [
+			return [
 				'<script>',
 				`import { Route, Router, Middleware\
 ${hasSplits ? ', AsyncComponent' : '' }\
@@ -146,9 +151,7 @@ ${hasPrefetches ? ', register_preload' : '' }\
 				'<Router {location} {history} >',
 				render,
 				'</Router>'
-			].join('\n')
-			console.log(ret)
-			return ret;
+			].join('\n');
 		}
 	}
 }
