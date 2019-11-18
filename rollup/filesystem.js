@@ -124,8 +124,7 @@ module.exports = function SvelteFileRouter({
 	ssr = false,
 	extensions = ['.svelte', '.html']
 } = {}) {
-	rootDir = path.join(process.cwd(), rootDir)
-
+	rootDir = path.resolve(rootDir)
 	return {
 		name: 'svelte-file-router',
 		resolveId(id) {
