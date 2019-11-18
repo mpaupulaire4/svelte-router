@@ -109,9 +109,6 @@
   setContext('svelte-router-internals-parent', base)
 
   setContext('svelte-router', {
-    query,
-    route,
-    preloading,
     preload,
     goto: (href, push = true) => {
       const url = new URL(href, location.origin)

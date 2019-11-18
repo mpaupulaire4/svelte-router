@@ -1,6 +1,6 @@
-export * from './Router.svelte'
 export { default as Router } from './Router.svelte'
-export * from './Route.svelte'
+export * from './Router.svelte'
 export { default as Route } from './Route.svelte'
 export { default as Middleware } from './Middleware.svelte'
+export { default as AsyncComponent } from './AsyncComponent.svelte'
 export * from './actions'

@@ -8,7 +8,6 @@
   export let path = '';
   export let props = {};
 
-  const { route, query } = getContext('svelte-router');
   const parent = getContext('svelte-router-internals-parent');
 
   const full_path = `/${parent}/${path}`;
@@ -19,10 +18,7 @@
 
 <svelte:component
   this="{$params ? component : Empty}"
-  params="{$params}"
-  query="{$query}"
-  path="{$route}"
   {...props}
 >
-  <slot></slot>
+  <slot />
 </svelte:component>

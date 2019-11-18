@@ -2,13 +2,12 @@
 <script>
   import { getContext } from 'svelte';
 
-  import { register_route } from './Router.svelte';
+  import { register_route, route, query } from './Router.svelte';
   import Empty from './Empty.svelte';
   export let component = Empty;
   export let path = '';
   export let props = {};
 
-  const { route, query } = getContext('svelte-router');
   const parent = getContext('svelte-router-internals-parent');
 
   const params = register_route(`/${parent}/${path}`);
@@ -17,9 +16,6 @@
 
 <svelte:component
   this="{$params && component}"
-  params="{$params}"
-  query="{$query}"
-  path="{$route}"
   {...props}
 >
   <slot

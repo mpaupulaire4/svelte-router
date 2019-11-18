@@ -8,6 +8,14 @@ function filename(file) {
 	return file.replace(path.extname(file), '')
 }
 
+function isPrefetchVar(var_meta) {
+	return (
+		var_meta.export_name === 'prefetch' &&
+		var_meta.module &&
+		!var_meta.writable
+	)
+}
+
 function get_routes(folder, parentname = '', parentpath = '') {
 	const files = fs.readdirSync(folder)
 	return [].concat(files.reduce((acc, file) => {
@@ -22,6 +30,7 @@ function get_routes(folder, parentname = '', parentpath = '') {
 			.replace(/(^index|!)$/g, '')
 			.replace(/\$/g, ':')
 			.toLowerCase()
+		const split = !!name.match(/!$/);
 		const stats = fs.lstatSync(path.join(folder, file))
 		if (stats.isDirectory()) {
 			const routes = get_routes(path.join(folder, file), full_name, route_path)
@@ -30,23 +39,32 @@ function get_routes(folder, parentname = '', parentpath = '') {
 			} else {
 				[].push.call((acc.children || acc), ...routes.map((route) => {
 					route.path = `${route_path}/${route.path}`
+					route.split = split || route.split
 					return route
 				}))
 			}
-		} else if (name.match(/^\$layout$/i)) {
-			return {
-				type: 'middleware',
-				split: !!name.match(/!$/),
-				file: path.join(folder, file),
-				name: full_name,
-				path: parentpath,
-				children: acc
-			}
 		} else {
+			const file_path = path.join(folder, file);
+			const hasPrefetch = compile(
+				fs.readFileSync(file_path, 'utf8'),
+				{generate: false}
+			).vars.some(isPrefetchVar);
+			if (name.match(/^\$layout$/i)) {
+				return {
+					type: 'middleware',
+					split,
+					hasPrefetch,
+					file: file_path,
+					name: full_name,
+					path: parentpath,
+					children: acc
+				}
+			}
 			[].push.call((acc.children || acc), {
 				type: 'route',
-				split: !!name.match(/!$/),
-				file: path.join(folder, file),
+				split,
+				hasPrefetch,
+				file: file_path,
 				name: full_name,
 				path: route_path,
 			})
@@ -59,7 +77,10 @@ function parse_routes(routes, ssr = false) {
 	const imports = []
 	const scripts = []
 	const render = []
+	let hasSplits = false
+	let hasPrefetches = false
 	routes.forEach((route) => {
+		hasPrefetches = hasPrefetches || route.hasPrefetch
 		const template = ssr ?
 			templates.ssr :
 			route.split ?
@@ -67,10 +88,13 @@ function parse_routes(routes, ssr = false) {
 				templates.client
 		imports.push(template.imports(route))
 		scripts.push(template.scripts(route))
+		hasSplits = route.split || hasSplits
 		if (route.children && route.children.length) {
-			const children = parse_routes(route.children);
+			const children = parse_routes(route.children, ssr);
 			imports.push(children.imports)
 			scripts.push(children.scripts)
+			hasSplits = children.hasSplits || hasSplits
+			hasPrefetches = hasPrefetches || children.hasPrefetches
 			render.push(
 				template.middleware({
 					...route,
@@ -84,7 +108,9 @@ function parse_routes(routes, ssr = false) {
 	return {
 		imports: imports.join('\n'),
 		scripts: scripts.join('\n'),
-		render: render.join('\n')
+		render: render.join('\n'),
+		hasPrefetches,
+		hasSplits: !ssr && hasSplits
 	}
 }
 
@@ -103,14 +129,17 @@ module.exports = function SvelteFileRouter({
 		load(id) {
 			if (id !== virtual) return null
 			const routes = get_routes(rootDir)
-			const { imports, render, scripts } = parse_routes(routes)
+			const { imports, render, scripts, hasSplits, hasPrefetches } = parse_routes(routes, ssr)
 			const ret = [
 				'<script>',
-				`import { Route, Router, Middleware, AsyncComponent } from '${pkg.name}';`,
+				`import { Route, Router, Middleware\
+${hasSplits ? ', AsyncComponent' : '' }\
+${hasPrefetches ? ', register_preload' : '' }\
+ } from '${pkg.name}';`,
 				imports,
 				'',
-				'export let location;',
-				'export let history;',
+				'export let location = undefined;',
+				'export let history = undefined;',
 				'',
 				scripts,
 				'</script>',
