@@ -87,18 +87,15 @@ export default function createRecognizer<Handler>(
   base = strip(base) + '/'
   const routes: ParsedPart<Handler[]>[] = []
 
+  type RouteMapping = [string, Handler] | [string, RouteMapping[]] | [string, Handler, RouteMapping[]]
+
   function add(path: string, handler: Handler) {
     const obj = parse(base + strip(path), [handler])
     routes.push(obj)
-    const remove = () => {
+    return () => {
       const i = routes.findIndex((o) => o === obj)
       if (!!~i) {
         routes.splice(i,1)
-      }
-    }
-    return {
-      sub: (match: typeof add) => {
-
       }
     }
   }
