@@ -1,0 +1,18 @@
+{
+  "name": "svelte-router",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon index.ts --exec ts-node"
+  },
+  "dependencies": {
+    "route-recognizer": "^0.3.4"
+  },
+  "devDependencies": {
+    "@tsconfig/svelte": "^1.0.10",
+    "nodemon": "^2.0.4",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.2"
+  }
+}
