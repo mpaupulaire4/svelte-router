@@ -4,15 +4,24 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon index.ts --exec ts-node"
-  },
-  "dependencies": {
-    "route-recognizer": "^0.3.4"
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "start": "sirv public",
+    "validate": "svelte-check"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^15.0.0",
+    "@rollup/plugin-node-resolve": "^9.0.0",
+    "@rollup/plugin-typescript": "^5.0.2",
     "@tsconfig/svelte": "^1.0.10",
-    "nodemon": "^2.0.4",
-    "ts-node": "^9.0.0",
+    "rollup": "^2.26.9",
+    "rollup-plugin-livereload": "^2.0.0",
+    "rollup-plugin-svelte": "^6.0.0",
+    "sirv-cli": "^1.0.6",
+    "svelte": "^3.24.1",
+    "svelte-check": "^1.0.33",
+    "svelte-preprocess": "^4.2.1",
+    "tslib": "^2.0.1",
     "typescript": "^4.0.2"
   }
 }
