@@ -40,7 +40,6 @@ module.exports = {
 	} : [
 		{ file: pkg.module, format: 'es' },
 		{ file: pkg.main, format: 'umd', name: 'SvelteRouter' },
-		{ file: pkg.svelte, format: 'es' }
 	],
 	plugins: [
 		svelte(config),
