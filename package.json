@@ -2,13 +2,13 @@
   "name": "svelte-router",
   "version": "4.0.0",
   "license": "MIT",
-  "svelte": "dist/svelte/index.js",
+  "svelte": "src/index.js",
   "module": "dist/index.m.js",
   "main": "dist/index.js",
   "author": "Michel Paupulaire <mpaupulaire4@gmail.com>",
   "repository": "git@github.com:mpaupulaire4/svelte-router.git",
   "scripts": {
-    "build": "rollup -c",
+    "build": "rollup -c && tsc",
     "dev": "rollup -c -w",
     "start": "sirv public",
     "validate": "svelte-check",
@@ -42,6 +42,7 @@
   ],
   "files": [
     "dist",
+    "src",
     "README.md"
   ],
   "dependencies": {}

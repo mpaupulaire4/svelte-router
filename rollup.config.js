@@ -39,7 +39,7 @@ module.exports = {
 		file: 'public/build/bundle.js'
 	} : [
 		{ file: pkg.module, format: 'es' },
-		{ file: pkg.main, format: 'umd', name: 'SvelteRouter' },
+		{ file: pkg.main, format: 'umd', name: 'SvelteRouter', plugins: [terser()] },
 	],
 	plugins: [
 		svelte(config),
@@ -56,7 +56,6 @@ module.exports = {
 		commonjs(),
 		typescript({ sourceMap: !production }),
 
-		production && terser(),
 		// In dev mode, call `npm run start` once
 		// the bundle has been generated
 		!production && serve(),
