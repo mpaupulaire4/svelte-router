@@ -2,8 +2,10 @@ const svelte = require('rollup-plugin-svelte');
 const { nodeResolve: resolve } = require('@rollup/plugin-node-resolve');
 const commonjs = require('@rollup/plugin-commonjs');
 const livereload = require('rollup-plugin-livereload');
+import { terser } from 'rollup-plugin-terser';
 const typescript = require('@rollup/plugin-typescript');
 const config = require('./svelte.config');
+const pkg = require('./package.json')
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -29,13 +31,17 @@ function serve() {
 }
 
 module.exports = {
-	input: 'src/main.ts',
-	output: {
+	input: !production ? 'test/main.ts' : 'src/index.ts',
+	output: !production ? {
 		sourcemap: true,
 		format: 'iife',
 		name: 'app',
 		file: 'public/build/bundle.js'
-	},
+	} : [
+		{ file: pkg.module, format: 'es' },
+		{ file: pkg.main, format: 'umd', name: 'SvelteRouter' },
+		{ file: pkg.svelte, format: 'es' }
+	],
 	plugins: [
 		svelte(config),
 
@@ -51,6 +57,7 @@ module.exports = {
 		commonjs(),
 		typescript({ sourceMap: !production }),
 
+		production && terser(),
 		// In dev mode, call `npm run start` once
 		// the bundle has been generated
 		!production && serve(),
