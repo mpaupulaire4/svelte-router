@@ -1,3 +1,7 @@
 node_modules
 public/build
 dist
+src/**/*.js
+src/**/*.js.map
+test/live/**/*.js
+test/live/**/*.js.map
