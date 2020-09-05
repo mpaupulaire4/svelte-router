@@ -1,5 +1,5 @@
 {
-  "name": "svelte-router",
+  "name": "@mpaupulaire4/svelte-router",
   "version": "4.0.0",
   "license": "MIT",
   "svelte": "src/index.js",
