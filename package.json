@@ -10,6 +10,7 @@
   "scripts": {
     "build": "rollup -c && tsc",
     "dev": "rollup -c -w",
+    "clean": "git clean -xf",
     "start": "sirv public",
     "validate": "svelte-check",
     "prepublishOnly": "yarn build"
