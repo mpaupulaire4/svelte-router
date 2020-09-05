@@ -2,6 +2,8 @@ node_modules
 public/build
 dist
 src/**/*.js
-src/**/*.js.map
 test/live/**/*.js
+src/**/*.js.map
 test/live/**/*.js.map
+src/**/*.d.ts
+test/live/**/*.d.ts
