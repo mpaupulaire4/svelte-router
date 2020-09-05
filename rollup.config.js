@@ -31,7 +31,7 @@ function serve() {
 }
 
 module.exports = {
-	input: !production ? 'test/main.ts' : 'src/index.ts',
+	input: !production ? 'test/live/main.ts' : 'src/index.ts',
 	output: !production ? {
 		sourcemap: true,
 		format: 'iife',

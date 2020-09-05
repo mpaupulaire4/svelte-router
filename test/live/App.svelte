@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {Router, Route} from '../src'
+	import {Router, Route} from '../../src'
 	import TestComponent from './Temp/TestComponent.svelte';
 	export let name: string;
 </script>
