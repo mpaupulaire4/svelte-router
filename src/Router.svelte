@@ -36,15 +36,20 @@
 </script>
 
 <script lang="ts">
-  import { createRouter } from './Router'
-  import { onMount, setContext } from 'svelte'
-  import { writable } from 'svelte/store'
+  import { createRouter } from './Router';
+  import { onMount, setContext } from 'svelte';
+  import { writable } from 'svelte/store';
   import { strip } from './Recognizer';
-  import ChildRoute from './ChildRoute.svelte'
+  import ChildRoute from './ChildRoute.svelte';
 
-  export let base = ''
-  export let queryParser: typeof qsParse = qsParse
-  export let historyAdapter: Adapter = defaultAdapter
+  export let base = '';
+  export let routes: Route[];
+  export let queryParser: typeof qsParse = qsParse;
+  export let historyAdapter: Adapter = defaultAdapter;
+
+  routes.map((route) => {
+
+  })
 
   onMount(() => {
     navigate(historyAdapter.location, {}, true)
@@ -134,5 +139,3 @@
 />
 
 <ChildRoute />
-
-<slot />

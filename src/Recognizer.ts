@@ -75,36 +75,40 @@ function exec(path: string, part: ParsedPart) {
 }
 
 export default function createRecognizer<Handler>(
-  base: string = '',
+  base: string = ''
 ) {
-  base = strip(base) + '/'
+  base = strip(base)
   let sorted = true
   const routes: ParsedPart<Handler[]>[] = []
 
   function add(path: string, ...handlers: Handler[]) {
-    if (!handlers.length) return
-    const obj = parse(base + strip(path), [...handlers])
+    if (!handlers.length) return () => {}
+    const obj = parse(`${base}/${strip(path)}`, [...handlers])
     routes.push(obj)
     sorted = false
-    return this
+    return () => {
+      const i = routes.findIndex((o) => o === obj)
+      if (!~-1) return
+      routes.splice(i,1)
+    }
+  }
+
+  function sort() {
+    if (sorted) return
+    routes.sort((
+      {wilds, params, statics},
+      {wilds: wildsB, params: paramsB, statics: staticsB }
+    ) => {
+      if (wilds - wildsB) return wilds - wildsB
+      if (!params && paramsB) return -1
+      if (params && !paramsB) return 1
+      return staticsB - statics || paramsB - params
+    })
+    sorted = true
   }
 
   function match_local(path: string) {
-    if (!sorted) {
-      // TODO revisit sorting
-      routes.sort(({wilds, params}, {wilds: wildsB, params: paramsB }) => {
-        if (wilds && !wildsB) {
-          return 1
-        } else if (!wilds && wildsB) {
-          return -1
-        }
-        if (!wilds) {
-          return params - paramsB
-        }
-        return wildsB - wilds || paramsB - params
-      })
-      sorted = true
-    }
+    sort()
     const res = match(path, routes)
     return res && {
       handlers: res.meta,
@@ -112,32 +116,14 @@ export default function createRecognizer<Handler>(
     }
   }
 
-  type Submapper = (mapper: typeof map) => void
-  function map(path: string, handlers: Handler[], submapper?: Submapper): void
-  function map(path: string, submapper: Submapper): void
-  function map(path: string, handlers: Handler[] | Submapper = [], submapper?: Submapper) {
-    if (typeof handlers === 'function') {
-      submapper = handlers
-      handlers = [] as Handler[]
-    }
-    if (submapper) {
-      submapper((subpath: string, subhandlers: Handler[] | Submapper = [], submapper?: Submapper) => {
-        if (typeof subhandlers === 'function') {
-          submapper = subhandlers
-          subhandlers = [] as Handler[]
-        }
-        return map(`${strip(path)}/${strip(subpath)}`, [...handlers as Handler[], ...subhandlers], submapper)
-      })
-    } else if (handlers.length) {
-      add(path, ...handlers)
-    }
-    return this
+  function controlled(path: string) {
+    return strip(path).startsWith(base)
   }
-
 
   return {
     add,
+    sort,
+    controlled,
     match: match_local,
-    map
   }
 }

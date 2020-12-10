@@ -1,39 +1,70 @@
 import type { Params } from './Recognizer'
-import createRecognizer from './Recognizer'
+import createRecognizer, { strip } from './Recognizer'
+
+export interface Route {
+  path: string
+  routes?: Route[]
+}
+
+interface FlattenPesult {
+  path: string,
+  handlers: any[]
+}
+
+
+function flatten(
+  {path, routes, ...config}: Route,
+  parent: FlattenPesult = { path: '', handlers: [] }
+): FlattenPesult[] {
+  const handlers = parent.handlers.concat(config)
+  path = `${strip(parent.path)}/${strip(path)}`
+  if (routes && routes.length) {
+    return routes.reduce((agg, route) => {
+      return agg.concat(flatten(route, { handlers, path }))
+    }, [] as FlattenPesult[])
+  }
+  return [{
+    path,
+    handlers
+  }]
+}
 
 type Callback<T> = (params: Params, ...args: any[]) => T
 
-export interface Handler<T> {
-  data?: Callback<Promise<any>>
-  component: T
+export interface Handler {
+  data?: Callback<any>
+  component: any
 }
 
-export interface ActiveHandler<T> extends Omit<Handler<T>, 'data'> {
+export interface ActiveHandler extends Omit<Handler, 'data'> {
   data: any
 }
 
-export function createRouter<T>(base: string = '') {
-  const recognizer = createRecognizer<() => Promise<Handler<T>> | Handler<T>>(base)
+export function createRouter(base: string = '', routes: Route[] = []) {
+  const { match, sort, add, controlled } = createRecognizer<() => Promise<Handler> | Handler>(base)
 
-  function change(path: string, ...args: any[]): Promise<ActiveHandler<T>[] | null> {
-    const matched = recognizer.match(path)
+  routes.forEach((route) =>
+    flatten(route)
+      .forEach(({path, handlers}) => add(path, ...handlers)))
+
+  function change(path: string, ...args: any[]): Promise<ActiveHandler[] | null | undefined> {
+    const matched = match(path)
     if (matched) {
       return Promise.all(matched.handlers.map(async (handler) => {
         const { data = () => {}, ...rest } = await handler()
         return {
           ...rest,
-          component: rest.component,
           data: (await data(matched.params, ...args)) || {}
         }
       }))
     } else {
-      return null
+      return controlled(path) ? null : undefined
     }
   }
 
   return {
-    add: recognizer.add,
-    map: recognizer.map,
+    add,
+    sort,
     change,
   }
 }
