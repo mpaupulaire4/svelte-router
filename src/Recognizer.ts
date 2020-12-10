@@ -74,7 +74,7 @@ function exec(path: string, part: ParsedPart) {
   return out;
 }
 
-export default function createRecognizer<Handler>(
+export function createRecognizer<Handler>(
   base: string = ''
 ) {
   base = strip(base)

@@ -1,9 +1,10 @@
 import type { Params } from './Recognizer'
-import createRecognizer, { strip } from './Recognizer'
+import { strip, createRecognizer } from './Recognizer'
 
-export interface Route {
+interface Route<T> {
   path: string
-  routes?: Route[]
+  routes?: Route<T>[]
+  handler?: T | (() => Promise<T>)
 }
 
 interface FlattenPesult {
@@ -11,16 +12,15 @@ interface FlattenPesult {
   handlers: any[]
 }
 
-
-function flatten(
-  {path, routes, ...config}: Route,
+export function flattenRoute<T>(
+  {path, routes, handler}: Route<T>,
   parent: FlattenPesult = { path: '', handlers: [] }
 ): FlattenPesult[] {
-  const handlers = parent.handlers.concat(config)
+  const handlers = handler ? parent.handlers.concat(handler) : parent.handlers
   path = `${strip(parent.path)}/${strip(path)}`
   if (routes && routes.length) {
     return routes.reduce((agg, route) => {
-      return agg.concat(flatten(route, { handlers, path }))
+      return agg.concat(flattenRoute(route, { handlers, path }))
     }, [] as FlattenPesult[])
   }
   return [{
@@ -32,26 +32,33 @@ function flatten(
 type Callback<T> = (params: Params, ...args: any[]) => T
 
 export interface Handler {
-  data?: Callback<any>
-  component: any
+  data?: Callback<any>,
+  [key: string]: any
 }
 
 export interface ActiveHandler extends Omit<Handler, 'data'> {
   data: any
 }
 
-export function createRouter(base: string = '', routes: Route[] = []) {
-  const { match, sort, add, controlled } = createRecognizer<() => Promise<Handler> | Handler>(base)
+export interface RouterConfig {
+  base?: string
+  routes?: Route<Handler>[]
+}
+
+export function createRouter({ base = '', routes = []}: RouterConfig = {}) {
+  const { match, sort, add, controlled } = createRecognizer<(() => Promise<Handler>) | Handler>(base)
 
   routes.forEach((route) =>
-    flatten(route)
+    flattenRoute(route)
       .forEach(({path, handlers}) => add(path, ...handlers)))
 
   function change(path: string, ...args: any[]): Promise<ActiveHandler[] | null | undefined> {
     const matched = match(path)
     if (matched) {
       return Promise.all(matched.handlers.map(async (handler) => {
-        const { data = () => {}, ...rest } = await handler()
+        const { data = () => {}, ...rest } = typeof handler === 'function' ?
+          await handler() :
+          handler
         return {
           ...rest,
           data: (await data(matched.params, ...args)) || {}

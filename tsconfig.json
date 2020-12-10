@@ -17,5 +17,6 @@
       "ESNext",
       "dom",
     ],
+    "types": ["jest", "svelte"]
   }
 }
