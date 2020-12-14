@@ -7,8 +7,11 @@
 <script lang="ts">
   import type { createRouter } from './Router';
   import type { Location } from './Location';
+
   import { setContext } from 'svelte';
   import { derived } from 'svelte/store';
+
+  import { strip } from './Recognizer';
   import ChildRoute from './ChildRoute.svelte';
   import { createHistoryLocation } from './Location';
 
@@ -42,7 +45,7 @@
     if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey || e.button || e.defaultPrevented) return;
     if (!y || x.target || !router.controlled(y.pathname) || y.host !== $location[0].host) return;
     e.preventDefault();
-    if ($location[0].href === y.href) {
+    if (strip($location[0].pathname) === strip(y.pathname)) {
       location.redirect(y, {})
     } else {
       location.navigate(y, {})

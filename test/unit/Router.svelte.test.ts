@@ -1,44 +1,71 @@
-import { writable } from 'svelte/store'
+import type { Location } from '../../src/Location'
 import Router from '../../src/Router.svelte'
-import Text from '../support/Text.svelte'
-import { withContext } from '../support/helpers'
+import { createRouter } from '../../src/Router'
+import { withHTML } from '../support/helpers'
+import { fireEvent } from '@testing-library/svelte'
 
-const store = writable([]);
-const render = withContext([
-  ['svelte-router-internal-handlers', store]
-])
+let url = new URL('http://localhost/home')
+const mockLocation: Location = {
+  subscribe: jest.fn((fn) => {
+    fn([url, {}])
+    return () => {}
+  }),
+  navigate: jest.fn(),
+  redirect: jest.fn(),
+  back: jest.fn(),
+  forward: jest.fn(),
+  popstate: jest.fn(),
+}
+
+const render = withHTML(`
+  <a href="/home/">Home Link</a>
+  <a href="/home/about">About Link</a>
+  <a href="http://www.example.com">External Link</a>
+  <a href="/some/other/route">Uncontrolled Link</a>
+`)
 
 describe('Router.svelte', () => {
-  // it('shouldn\'t render if there are no handlers', () => {
-  //   store.set([])
-  //   const { container } = render(Router)
-  //   expect(container).toHaveTextContent('')
-  // })
+  it('should mount the popstate listener to the window if they exist', () => {
+    render(Router, {
+      location: mockLocation,
+      router: createRouter()
+    })
+    window.dispatchEvent(new PopStateEvent('popstate', { state: {} }))
+    expect(mockLocation.popstate).toHaveBeenCalled()
+  })
 
-  // it('should render data as props', () => {
-  //   store.set([
-  //     { component: Text, data: { text: 'I am an only child' }}
-  //   ])
-  //   const { container } = render(Router)
-  //   expect(container).toHaveTextContent('I am an only child')
-  // })
+  describe('link click handler', () => {
+    it('should ignore uncontrolled and external links', () => {
+      const { getByText } = render(Router, {
+        location: mockLocation,
+        router: createRouter({ base: 'home' })
+      })
 
-  // it('should pass any props to component handler', () => {
-  //   store.set([
-  //     { component: Text, data: {} }
-  //   ])
-  //   const { container } = render(Router, { text: 'the more the merrier' })
-  //   expect(container).toHaveTextContent('the more the merrier')
-  // })
+      fireEvent.click(getByText('External Link'))
+      expect(mockLocation.redirect).not.toHaveBeenCalled()
+      expect(mockLocation.navigate).not.toHaveBeenCalled()
+    })
 
-  // it('should render all handlers', () => {
-  //   store.set([
-  //     { component: Text, data: {} },
-  //     { component: Text, data: {} },
-  //     { component: Text, data: {} },
-  //     { component: Text, data: {} },
-  //   ])
-  //   const { container } = render(Router)
-  //   expect(container).toHaveTextContent('test test test test')
-  // })
+    it('should redirect when linking to current location', () => {
+      const { getByText } = render(Router, {
+        location: mockLocation,
+        router: createRouter({ base: 'home' })
+      })
+
+      fireEvent.click(getByText('Home Link'))
+      expect(mockLocation.redirect).toHaveBeenCalled()
+      expect(mockLocation.navigate).not.toHaveBeenCalled()
+    })
+
+    it('should navigate when linking to a different location', () => {
+      const { getByText } = render(Router, {
+        location: mockLocation,
+        router: createRouter({ base: 'home' })
+      })
+
+      fireEvent.click(getByText('About Link'))
+      expect(mockLocation.redirect).not.toHaveBeenCalled()
+      expect(mockLocation.navigate).toHaveBeenCalled()
+    })
+  })
 })
