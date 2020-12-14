@@ -1,5 +1,6 @@
 import { createRouter, flattenRoute } from '../../src/Router'
 
+const toURL = (path: string) => new URL(path, 'http://www.example.com')
 
 describe('flattenRoute', () => {
   it('should flatten a route with no subroutes', () => {
@@ -27,7 +28,7 @@ describe('flattenRoute', () => {
 })
 
 describe('Router', () => {
-  it('should match routes', async () => {
+  it('should match routes', () => {
     const router = createRouter({
       routes: [
         {
@@ -68,51 +69,44 @@ describe('Router', () => {
       ]
     })
 
-    expect(await router.change('')).toEqual([{ data: {}, name: 'index' }])
-    expect(await router.change('/home')).toEqual([{ data: {}, name: 'home' }])
-    expect(await router.change('/post')).toEqual([
-      { data: {}, name: 'post_layout' },
-      { data: {}, name: 'posts' },
+    expect(router.get(toURL(''))).toEqual([{ name: 'index' }])
+    expect(router.get(toURL('/home'))).toEqual([{ name: 'home' }])
+    expect(router.get(toURL('/post'))).toEqual([
+      { name: 'post_layout' },
+      { name: 'posts' },
     ])
-    expect(await router.change('/post/1')).toEqual([
-      { data: {}, name: 'post_layout' },
-      { data: {}, name: 'post' },
+    expect(router.get(toURL('/post/1'))).toEqual([
+      { name: 'post_layout' },
+      { name: 'post' },
     ])
-    expect(await router.change('/comment')).toEqual([
-      { data: {}, name: 'comments' },
+    expect(router.get(toURL('/comment'))).toEqual([
+      { name: 'comments' },
     ])
-    expect(await router.change('/comment/1')).toEqual([
-      { data: {}, name: 'comment' },
+    expect(router.get(toURL('/comment/1'))).toEqual([
+      { name: 'comment' },
     ])
-    expect(await router.change('/any/other')).toEqual(null)
+    expect(router.get(toURL('/any/other'))).toEqual(null)
   })
 
-  it('should allow you to add routes', async () => {
+  it('should allow you to add routes', () => {
     const router = createRouter()
     router.add('/comment', { name: 'comments'})
     router.add('/comment/:id', { name: 'comment'})
 
-    expect(await router.change('/comment')).toEqual([
-      { data: {}, name: 'comments' },
+    expect(router.get(toURL('/comment'))).toEqual([
+      { name: 'comments' },
     ])
-    expect(await router.change('/comment/1')).toEqual([
-      { data: {}, name: 'comment' },
+    expect(router.get(toURL('/comment/1'))).toEqual([
+      { name: 'comment' },
     ])
-    expect(await router.change('/any/other')).toEqual(null)
+    expect(router.get(toURL('/any/other'))).toEqual(null)
   })
 
-  it('should return null for unmatched routes', async () => {
+  it('should return null for unmatched routes', () => {
     const router = createRouter()
     router.add('/comment', { name: 'comments'})
     router.add('/comment/:id', { name: 'comment'})
-    expect(await router.change('/any/other')).toEqual(null)
-  })
-
-  it('should return undefined for uncontrolled routes', async () => {
-    const router = createRouter({ base: 'base' })
-    router.add('/comment', { name: 'comments'})
-    router.add('/comment/:id', { name: 'comment'})
-    expect(await router.change('/any/other')).toEqual(undefined)
+    expect(router.get(toURL('/any/other'))).toEqual(null)
   })
 
   it('should handle async handlers', async () => {
@@ -125,17 +119,19 @@ describe('Router', () => {
       ]
     })
 
-    expect(await router.change('')).toEqual([{ data: {}, name: 'index' }])
+    const result = router.get(toURL(''))
+    expect(result[0]).toBeInstanceOf(Promise)
+    expect(await result[0]).toEqual({ name: 'index' })
   })
-  it('should handle async data', async () => {
+  it('should handle data methods', async () => {
     const router = createRouter({
       routes: [
         {
           path: '/',
-          handler: {
+          handler: () => Promise.resolve({
             name: 'index',
-            data: () => Promise.resolve({ some: 'data' })
-          },
+            data: () => ({ some: 'data' })
+          }),
         },
         {
           path: '/home',
@@ -147,24 +143,8 @@ describe('Router', () => {
       ]
     })
 
-    expect(await router.change('')).toEqual([{ data: { some: 'data' }, name: 'index' }])
-    expect(await router.change('/home')).toEqual([{ data: { some: 'other.data' }, name: 'home' }])
-  })
-
-  it('should handle async data and handlers', async () => {
-    const router = createRouter({
-      routes: [
-        {
-          path: '/',
-          handler: () => Promise.resolve({
-            name: 'index',
-            data: () => Promise.resolve({ some: 'data' })
-          })
-        },
-      ]
-    })
-
-    expect(await router.change('')).toEqual([{ data: { some: 'data' }, name: 'index' }])
+    expect(await Promise.all(router.get(toURL('')))).toEqual([{ data: { some: 'data' }, name: 'index' }])
+    expect(router.get(toURL('/home'))).toEqual([{ data: { some: 'other.data' }, name: 'home' }])
   })
 
   it('should allow passing extra information to data handlers', async () => {
@@ -181,10 +161,14 @@ describe('Router', () => {
       ]
     })
 
-    expect(await router.change('', 'other', 'params')).toEqual([{ data: { some: 'data' }, name: 'index' }]);
+    expect(await router.get(toURL(''), 'other', 'params')).toEqual([{ data: { some: 'data' }, name: 'index' }]);
     expect(mock).toHaveBeenCalledTimes(1);
     expect(mock).toHaveBeenCalledWith(
-      {},
+      {
+        params: {},
+        path: '/',
+        query: '',
+      },
       'other',
       'params'
     );

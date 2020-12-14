@@ -29,7 +29,13 @@ export function flattenRoute<T>(
   }]
 }
 
-type Callback<T> = (params: Params, ...args: any[]) => T
+interface RouteInfo {
+  params: Params,
+  path: string,
+  query: string,
+}
+
+type Callback<T> = (params: RouteInfo, ...args: any[]) => T
 
 export interface Handler {
   data?: Callback<any>,
@@ -45,33 +51,67 @@ export interface RouterConfig {
   routes?: Route<Handler>[]
 }
 
+function toActiveHandler(
+  { data = () => {}, ...rest }: Handler,
+  routeInfo: RouteInfo,
+  ...args: any[]
+): ActiveHandler {
+  return {
+    ...rest,
+    data: data(
+      routeInfo,
+      ...args
+    )
+  }
+}
+
+// TODO: explicitly create a context object to be passed in
+// This will fix the issue where the context on preloads isn't ever saved
+// This will also allow the handling of redirects during a route change
 export function createRouter({ base = '', routes = []}: RouterConfig = {}) {
-  const { match, sort, add, controlled } = createRecognizer<(() => Promise<Handler>) | Handler>(base)
+  const { match, sort, add, controlled } = createRecognizer<Route<Handler>['handler']>(base)
+  const preloads = new Map<string, Array<ActiveHandler | Promise<ActiveHandler>>>()
 
   routes.forEach((route) =>
     flattenRoute(route)
       .forEach(({path, handlers}) => add(path, ...handlers)))
 
-  function change(path: string, ...args: any[]): Promise<ActiveHandler[] | null | undefined> {
-    const matched = match(path)
+  function get(path: URL, ...args: any[]): Array<ActiveHandler | Promise<ActiveHandler>> | null {
+    const matched = match(path.pathname)
     if (matched) {
-      return Promise.all(matched.handlers.map(async (handler) => {
-        const { data = () => {}, ...rest } = typeof handler === 'function' ?
-          await handler() :
-          handler
-        return {
-          ...rest,
-          data: (await data(matched.params, ...args)) || {}
+      const routeInfo = {
+        params: matched.params,
+        path: path.pathname,
+        query: path.search,
+      }
+      return matched.handlers.map((handler) => {
+        if (typeof handler === 'function') {
+          return handler().then((handler) => toActiveHandler(handler, routeInfo, ...args))
         }
-      }))
+        return toActiveHandler(handler, routeInfo, ...args);
+      })
     } else {
-      return controlled(path) ? null : undefined
+      return null
     }
+  }
+
+  function load(...args: Parameters<typeof get>) {
+    return preloads.has(args[0].href) ?
+      preloads.get(args[0].href) :
+      get(...args)
   }
 
   return {
     add,
     sort,
-    change,
+    controlled,
+    preload: (...args: Parameters<typeof get>) =>
+      preloads.set(args[0].href, load(...args)),
+    get: (...args: Parameters<typeof get>) => {
+      const result = load(...args)
+      preloads.clear()
+      return result
+    },
+    clearPreloads: () => preloads.clear(),
   }
 }
