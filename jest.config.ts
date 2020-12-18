@@ -176,7 +176,7 @@ export default {
 
   // A map from regular expressions to paths to transformers
   transform: {
-    ...defaults.transform,
+    // ...defaults.transform,
     '^.+\\.svelte$': ["svelte-jester", { "preprocess": true }],
   },
 

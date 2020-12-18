@@ -5,12 +5,13 @@ coverage
 
 # yarn related things
 .yarn/*
+!.yarn/cache
 !.yarn/releases
 !.yarn/plugins
 !.yarn/sdks
 !.yarn/versions
-.pnp.*
 
+# build artifacts
 src/**/*.js
 src/**/*.js.map
 src/**/*.d.ts

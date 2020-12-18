@@ -7,4 +7,5 @@
   },
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
+  "svelte.language-server.ls-path": ".yarn/sdks/svelte-language-server/bin/server.js"
 }
