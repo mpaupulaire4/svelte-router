@@ -10,3 +10,7 @@ coverage
 !.yarn/sdks
 !.yarn/versions
 .pnp.*
+
+src/**/*.js
+src/**/*.js.map
+src/**/*.d.ts

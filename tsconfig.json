@@ -1,11 +1,13 @@
 {
   "extends": "@tsconfig/svelte/tsconfig.json",
 
-  "include": ["src/**/*", "test/**/*"],
+  "include": ["src/**/*", "test/live/**/*"],
   "exclude": ["node_modules/*", "__sapper__/*", "public/*"],
 
 
   "compilerOptions": {
+    "target": "ESNEXT",
+    "module": "ESNext",
     "noImplicitAny": true,
     "allowSyntheticDefaultImports": true,
     "lib": [
