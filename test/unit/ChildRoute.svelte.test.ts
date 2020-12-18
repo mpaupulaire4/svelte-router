@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store'
 import ChildRoute from '../../src/ChildRoute.svelte'
-import Text from '../support/Text.svelte'
+import Log from '../support/Log.svelte'
 import { withContext } from '../support/helpers'
 
 const store = writable([]);
@@ -15,30 +15,30 @@ describe('ChildRoute.svelte', () => {
     expect(container).toHaveTextContent('')
   })
 
-  it('should render data as props', () => {
+  it('should pass data as data prop', () => {
     store.set([
-      { component: Text, data: { text: 'I am an only child' }}
+      { component: Log, data: 'I am an only child' }
     ])
     const { container } = render(ChildRoute)
-    expect(container).toHaveTextContent('I am an only child')
+    expect(container).toHaveTextContent('{ "data": "I am an only child" }')
   })
 
   it('should pass any props to component handler', () => {
     store.set([
-      { component: Text, data: {} }
+      { component: Log }
     ])
     const { container } = render(ChildRoute, { text: 'the more the merrier' })
-    expect(container).toHaveTextContent('the more the merrier')
+    expect(container).toHaveTextContent('{ "text": "the more the merrier" }')
   })
 
   it('should render all handlers', () => {
     store.set([
-      { component: Text, data: {} },
-      { component: Text, data: {} },
-      { component: Text, data: {} },
-      { component: Text, data: {} },
+      { component: Log, data: 'one' },
+      { component: Log, data: 'two' },
+      { component: Log, data: 'three' },
+      { component: Log, data: 'four' },
     ])
     const { container } = render(ChildRoute)
-    expect(container).toHaveTextContent('test test test test')
+    expect(container).toHaveTextContent('{ "data": "one" } { "data": "two" } { "data": "three" } { "data": "four" }')
   })
 })
