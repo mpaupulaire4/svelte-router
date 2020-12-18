@@ -622,6 +622,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mpaupulaire4/svelte-router@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@mpaupulaire4/svelte-router@workspace:."
+  dependencies:
+    "@rollup/plugin-commonjs": ^17.0.0
+    "@rollup/plugin-node-resolve": ^11.0.1
+    "@rollup/plugin-typescript": ^8.1.0
+    "@testing-library/jest-dom": ^5.11.6
+    "@testing-library/svelte": ^3.0.0
+    "@tsconfig/svelte": ^1.0.10
+    "@types/jest": ^26.0.19
+    jest: ^26.6.3
+    rollup: ^2.35.1
+    rollup-plugin-svelte: ^7.0.0
+    rollup-plugin-terser: ^7.0.2
+    semantic-release: ^17.3.0
+    sirv-cli: ^1.0.10
+    svelte: ^3.31.0
+    svelte-check: ^1.1.22
+    svelte-jester: ^1.3.0
+    ts-jest: ^26.4.4
+    ts-node: ^9.1.1
+    tslib: ^2.0.3
+    typescript: ^4.1.3
+  languageName: unknown
+  linkType: soft
+
 "@nodelib/fs.scandir@npm:2.1.3":
   version: 2.1.3
   resolution: "@nodelib/fs.scandir@npm:2.1.3"
@@ -1591,13 +1618,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"async-limiter@npm:~1.0.0":
-  version: 1.0.1
-  resolution: "async-limiter@npm:1.0.1"
-  checksum: d123312ace75c07399ddc58e06cc028dacce35f71cdf59cf9b22f6c31dde221c22285e6185ede823ecb67f3b3065e26205eb9f74fcbba3f12ce7a2c2b09d7763
-  languageName: node
-  linkType: hard
-
 "asynckit@npm:^0.4.0":
   version: 0.4.0
   resolution: "asynckit@npm:0.4.0"
@@ -2066,7 +2086,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:^3.3.0, chokidar@npm:^3.4.1":
+"chokidar@npm:^3.4.1":
   version: 3.4.3
   resolution: "chokidar@npm:3.4.3"
   dependencies:
@@ -5695,27 +5715,6 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"livereload-js@npm:^3.1.0":
-  version: 3.3.1
-  resolution: "livereload-js@npm:3.3.1"
-  checksum: 2cf4ab6f51301bd5964b0432bed066541839e0ec560e5df1b4049a2547a87a9dd01ed83df2b1687f022887ca2534e4a65104385374775179bd861d6f3dc57d25
-  languageName: node
-  linkType: hard
-
-"livereload@npm:^0.9.1":
-  version: 0.9.1
-  resolution: "livereload@npm:0.9.1"
-  dependencies:
-    chokidar: ^3.3.0
-    livereload-js: ^3.1.0
-    opts: ">= 1.2.0"
-    ws: ^6.2.1
-  bin:
-    livereload: ./bin/livereload.js
-  checksum: e2c850e5d6c0191cc0796c0558f6c71bded88c3982835529dc8559e406516c61d3038e757e4a70a5ccf65b107ca8eace9b1a2211e5e3c71bacf329f971e606b1
-  languageName: node
-  linkType: hard
-
 "load-json-file@npm:^2.0.0":
   version: 2.0.0
   resolution: "load-json-file@npm:2.0.0"
@@ -7064,13 +7063,6 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"opts@npm:>= 1.2.0":
-  version: 2.0.2
-  resolution: "opts@npm:2.0.2"
-  checksum: 9f06c54f4dfa7ddccbf7c42b2e170076c5eabfacafe4249f643bda50462dabf0543405557eb619d2f09c886075c2bcaba2c2e8b5e23fcf4f899fc259e3e4397d
-  languageName: node
-  linkType: hard
-
 "os-homedir@npm:^1.0.0":
   version: 1.0.2
   resolution: "os-homedir@npm:1.0.2"
@@ -8120,15 +8112,6 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"rollup-plugin-livereload@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "rollup-plugin-livereload@npm:2.0.0"
-  dependencies:
-    livereload: ^0.9.1
-  checksum: e32fc0e3dc090128af39f5ce3d7d442fc27f9059e596a2a81541553b3f600dab708c3a507ffcc0eb6b36e40726f67be1b4a77ecbf15ffcc66b7724acd3c6d52b
-  languageName: node
-  linkType: hard
-
 "rollup-plugin-svelte@npm:^7.0.0":
   version: 7.0.0
   resolution: "rollup-plugin-svelte@npm:7.0.0"
@@ -9142,34 +9125,6 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"svelte-router@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "svelte-router@workspace:."
-  dependencies:
-    "@rollup/plugin-commonjs": ^17.0.0
-    "@rollup/plugin-node-resolve": ^11.0.1
-    "@rollup/plugin-typescript": ^8.1.0
-    "@testing-library/jest-dom": ^5.11.6
-    "@testing-library/svelte": ^3.0.0
-    "@tsconfig/svelte": ^1.0.10
-    "@types/jest": ^26.0.19
-    jest: ^26.6.3
-    rollup: ^2.35.1
-    rollup-plugin-livereload: ^2.0.0
-    rollup-plugin-svelte: ^7.0.0
-    rollup-plugin-terser: ^7.0.2
-    semantic-release: ^17.3.0
-    sirv-cli: ^1.0.10
-    svelte: ^3.31.0
-    svelte-check: ^1.1.22
-    svelte-jester: ^1.3.0
-    ts-jest: ^26.4.4
-    ts-node: ^9.1.1
-    tslib: ^2.0.3
-    typescript: ^4.1.3
-  languageName: unknown
-  linkType: soft
-
 "svelte@npm:^3.31.0":
   version: 3.31.0
   resolution: "svelte@npm:3.31.0"
@@ -10072,15 +10027,6 @@ fsevents@~2.1.2:
     signal-exit: ^3.0.2
     typedarray-to-buffer: ^3.1.5
   checksum: a26a8699c30cdc81d041b2c1049c6773f1e8401edda365874e9ca2dcf1fcf024dfeb43eea5e08c2e9b4e77be08a160d37f8d6c5d8c2d3ceccdf3d06e5cb38d35
-  languageName: node
-  linkType: hard
-
-"ws@npm:^6.2.1":
-  version: 6.2.1
-  resolution: "ws@npm:6.2.1"
-  dependencies:
-    async-limiter: ~1.0.0
-  checksum: 35d32b09e28f799f04708c3a7bd9eff469ae63e60543d7e18335f28689228a42ee21210f48de680aad6e5317df76b5b1183d1a1ea4b4d14cb6e0943528f40e76
   languageName: node
   linkType: hard
 

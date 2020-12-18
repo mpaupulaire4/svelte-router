@@ -1,7 +1,9 @@
 {
   "search.exclude": {
     "**/.yarn": true,
-    "**/.pnp.*": true
+    "**/.pnp.*": true,
+    "**/coverage": true,
+    "**/dist": true
   },
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
