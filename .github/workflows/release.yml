@@ -18,7 +18,6 @@ jobs:
           path: node_modules
           key: ${{ runner.OS }}-build-${{ hashFiles('**/yarn.lock') }}
       - run: yarn install
-      - run: yarn build
       - run: yarn test
   release:
     name: Release
