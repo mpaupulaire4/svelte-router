@@ -1,4 +1,6 @@
-const template = require('lodash.template');
+// const template = require('lodash.template');
+
+const template = (string: string) => string
 
 const ssr = {
   imports: template('import ${ name } from "${ file }";'),

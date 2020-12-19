@@ -1,9 +1,17 @@
 node_modules
 public/build
 dist
+coverage
+
+# yarn related things
+.yarn/*
+!.yarn/cache
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+
+# build artifacts
 src/**/*.js
-test/live/**/*.js
 src/**/*.js.map
-test/live/**/*.js.map
 src/**/*.d.ts
-test/live/**/*.d.ts
