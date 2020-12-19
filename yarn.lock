@@ -640,7 +640,7 @@ __metadata:
     semantic-release: ^17.3.0
     sirv-cli: ^1.0.10
     svelte: ^3.31.0
-    svelte-check: ^1.1.22
+    svelte-check: ^1.1.23
     svelte-jester: ^1.3.0
     svelte-preprocess: ^4.6.1
     ts-jest: ^26.4.4
@@ -9048,9 +9048,9 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"svelte-check@npm:^1.1.22":
-  version: 1.1.22
-  resolution: "svelte-check@npm:1.1.22"
+"svelte-check@npm:^1.1.23":
+  version: 1.1.23
+  resolution: "svelte-check@npm:1.1.23"
   dependencies:
     chalk: ^4.0.0
     chokidar: ^3.4.1
@@ -9064,7 +9064,7 @@ fsevents@~2.1.2:
     svelte: ^3.24.0
   bin:
     svelte-check: bin/svelte-check
-  checksum: 949ad27064cce2da0c5e685f51806bad138fd87c47762982156eac1e4a9c51c16383219d0fe90ddf1aa2edb0bb0817fcd8f87195babd37cc89c5837199b18d8f
+  checksum: 2c54e07ec2dc10762bcd467e82c3373465a3e37ac9dd521956968e3305d15583833132005aa42ab7b97c9c38868083f88f468b801b1ca06f960ad818eb921e5d
   languageName: node
   linkType: hard
 
