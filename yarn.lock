@@ -658,7 +658,7 @@ __metadata:
     "@testing-library/svelte": ^3.0.0
     "@tsconfig/svelte": ^1.0.10
     "@types/jest": ^26.0.19
-    "@types/node": ^14.14.14
+    "@types/testing-library__jest-dom": ^5.9.5
     jest: ^26.6.3
     rollup: ^2.35.1
     rollup-plugin-svelte: ^7.0.0
@@ -1201,13 +1201,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^14.14.14":
-  version: 14.14.14
-  resolution: "@types/node@npm:14.14.14"
-  checksum: dea8d257d49d68c65dafa6ebde9453bb61b67febc92ed8d7e38fce8b95f18d32ccffb3ab37021f9be8d1e5c65cd59cdb7dd8981d9b89b2be103b3012aee09fcf
-  languageName: node
-  linkType: hard
-
 "@types/normalize-package-data@npm:^2.4.0":
   version: 2.4.0
   resolution: "@types/normalize-package-data@npm:2.4.0"
@@ -1277,7 +1270,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/testing-library__jest-dom@npm:^5.9.1":
+"@types/testing-library__jest-dom@npm:^5.9.1, @types/testing-library__jest-dom@npm:^5.9.5":
   version: 5.9.5
   resolution: "@types/testing-library__jest-dom@npm:5.9.5"
   dependencies:
