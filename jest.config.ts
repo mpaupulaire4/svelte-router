@@ -1,5 +1,5 @@
 // @ts-ignore
-import { defaults } from 'ts-jest/presets'
+import { jsWithBabel as defaults } from 'ts-jest/presets'
 
 /*
  * For a detailed explanation regarding each configuration property and type check, visit:
@@ -7,7 +7,7 @@ import { defaults } from 'ts-jest/presets'
  */
 
 export default {
-  preset: 'ts-jest',
+  preset: 'ts-jest/presets/js-with-babel',
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
