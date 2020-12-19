@@ -396,10 +396,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emmetio/extract-abbreviation@npm:0.1.6":
-  version: 0.1.6
-  resolution: "@emmetio/extract-abbreviation@npm:0.1.6"
-  checksum: 1365cbfd21e5adb53ddaf15bd7659cb7d638c3d4cca569831ce0d5813448256ad8152188bcddc0216f7398f00d0acdeba09b700f6073c3409997ce1cd43d9419
+"@emmetio/abbreviation@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "@emmetio/abbreviation@npm:2.1.1"
+  dependencies:
+    "@emmetio/scanner": ^1.0.0
+  checksum: 25762f1a727f8e20b3df07dbab61142a7cbedf238bcdd37bcd2ab3f5385b75e1f9e59b2e491fa455f71282adbb09cccaf0fcce53b8061c35754d296e5b6f4036
+  languageName: node
+  linkType: hard
+
+"@emmetio/css-abbreviation@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "@emmetio/css-abbreviation@npm:2.1.2"
+  dependencies:
+    "@emmetio/scanner": ^1.0.0
+  checksum: 7448208924283eb98099bb888682af6a3cf5356eccf6527e14f55ddff088df77b3795ca7b8511d8e9f7725ee4f23124116326e69d41a62f8e74eff0d44d245b8
+  languageName: node
+  linkType: hard
+
+"@emmetio/scanner@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@emmetio/scanner@npm:1.0.0"
+  checksum: 7fa356b160fe3654706b1d454599251743effcbe0e9627eace890d497df77c36dc48ce1328abb14cfce0bfdd3f7e42dee9df8599960240cb83c27c8b59b9cf6a
   languageName: node
   linkType: hard
 
@@ -650,7 +668,7 @@ __metadata:
     svelte: ^3.31.0
     svelte-check: ^1.1.23
     svelte-jester: ^1.3.0
-    svelte-language-server: ^0.10.163
+    svelte-language-server: ^0.11.0
     svelte-preprocess: ^4.6.1
     ts-jest: ^26.4.4
     ts-node: ^9.1.1
@@ -3059,6 +3077,16 @@ __metadata:
   version: 0.7.2
   resolution: "emittery@npm:0.7.2"
   checksum: 34acfef51922a1b73d75cb658bf43ecb279633b263ffa831fb87697abbbd3aa4241ef15d204eeaa6a3c62656bd7563de7145c416a2bb18c4805e54ce6d7cdac6
+  languageName: node
+  linkType: hard
+
+"emmet@npm:^2.1.5":
+  version: 2.2.1
+  resolution: "emmet@npm:2.2.1"
+  dependencies:
+    "@emmetio/abbreviation": ^2.1.1
+    "@emmetio/css-abbreviation": ^2.1.2
+  checksum: 56386a9e5d3bb30379d53a1e50db24cb54d88621f2361e719b04a74e7352b91c48d9ea5bb427242e888085472278a9d18863be5e169d1111da3eb55a82c43dcf
   languageName: node
   linkType: hard
 
@@ -5478,10 +5506,10 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"jsonc-parser@npm:^1.0.0":
-  version: 1.0.3
-  resolution: "jsonc-parser@npm:1.0.3"
-  checksum: 1da46ed4bd67fe54a9a4eec52452aa6d8fbd9677615c72daea2b87d44eabc22041a12cfb04f85968501fec6460f50c1f87d8fbd6f512ad114e791e06a1df1d92
+"jsonc-parser@npm:^2.3.0":
+  version: 2.3.1
+  resolution: "jsonc-parser@npm:2.3.1"
+  checksum: 4ee1326ca9d024de73b4bf355ffec4b5610bd78e4b799b7ce13823e1e9f2044e363e17a9e6d272e9d807302807e398e4cdd904164cfa94f85f8a3a9aec5b0c22
   languageName: node
   linkType: hard
 
@@ -7560,12 +7588,12 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"prettier@npm:2.1.2":
-  version: 2.1.2
-  resolution: "prettier@npm:2.1.2"
+"prettier@npm:2.2.1":
+  version: 2.2.1
+  resolution: "prettier@npm:2.2.1"
   bin:
     prettier: bin-prettier.js
-  checksum: bedc24c568efbcfe45f255558900777e2fabb36bf28ed4c22d2456eb22dfb012d12e566a46472ea5b857a4e9f263e888f7e316527d00bb58188f1820b0b0031a
+  checksum: 92c6c9f4b87eba1f28466edee57dd18c80d00b858edda77d46d1950d20e6e302b68ee255fc91133ba931e63c4577b5ae30da194d9626a8f3c0177778b91bf056
   languageName: node
   linkType: hard
 
@@ -9170,30 +9198,30 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"svelte-language-server@npm:^0.10.163":
-  version: 0.10.163
-  resolution: "svelte-language-server@npm:0.10.163"
+"svelte-language-server@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "svelte-language-server@npm:0.11.0"
   dependencies:
     chokidar: ^3.4.1
     cosmiconfig: ^7.0.0
     estree-walker: ^2.0.1
     lodash: ^4.17.19
-    prettier: 2.1.2
+    prettier: 2.2.1
     prettier-plugin-svelte: ~1.4.1
     source-map: ^0.7.3
-    svelte: 3.28.0
+    svelte: 3.31.0
     svelte-preprocess: ~4.6.1
     svelte2tsx: "*"
     typescript: "*"
-    vscode-css-languageservice: 4.2.0
-    vscode-emmet-helper: 1.2.17
-    vscode-html-languageservice: 3.1.4
-    vscode-languageserver: 6.1.1
-    vscode-languageserver-types: 3.15.1
+    vscode-css-languageservice: 5.0.0
+    vscode-emmet-helper: 2.1.2
+    vscode-html-languageservice: 4.0.0
+    vscode-languageserver: 7.0.0
+    vscode-languageserver-types: 3.16.0
     vscode-uri: 2.1.2
   bin:
     svelteserver: bin/server.js
-  checksum: 0ebdecdf61ac05949f0d67bdb3a144b0d354b4e2ab64b395abf973ac98f6cb2567d3e1f5c689c52b451cfac179e6aff81682474cce044c2459c58753b968c04a
+  checksum: ca6437c603da2f0f9bbc8c9e39264d1d576b37a4f47dc405e0ad2b91bff4c9fccc7207dd2eac1c6b73fac6782ce365292df53ab79e9911d7fa1f392db6752bc0
   languageName: node
   linkType: hard
 
@@ -9257,14 +9285,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"svelte@npm:3.28.0":
-  version: 3.28.0
-  resolution: "svelte@npm:3.28.0"
-  checksum: 0380ab421fa36701891c7ac8c547fea007225473e75f8ef28f1de4c43a0808ca99413b15530c6e60266f8fa274a1305a353a13a0276ad946afb7b0ab5aea14ef
-  languageName: node
-  linkType: hard
-
-"svelte@npm:^3.31.0":
+"svelte@npm:3.31.0, svelte@npm:^3.31.0":
   version: 3.31.0
   resolution: "svelte@npm:3.31.0"
   checksum: 16a09376f397a68aec78b925bf0adfe378f052e985dcadcca290a340b65b4a4f883374c710a9ae217c2674b76563e5f7c56ec8d3270594ef9ff5d504bafe0542
@@ -9960,38 +9981,41 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"vscode-css-languageservice@npm:4.2.0":
-  version: 4.2.0
-  resolution: "vscode-css-languageservice@npm:4.2.0"
+"vscode-css-languageservice@npm:5.0.0":
+  version: 5.0.0
+  resolution: "vscode-css-languageservice@npm:5.0.0"
   dependencies:
     vscode-languageserver-textdocument: ^1.0.1
-    vscode-languageserver-types: ^3.15.1
-    vscode-nls: ^4.1.2
-    vscode-uri: ^2.1.1
-  checksum: 5528c5562feb6e2f268475022cbdd265b7b81e179b496130b4ad0c33b7f70ade88b82f46cc7e5e7d7cd3647bfcab597a6cfbc1f056d90e4714e2359138b6b0e7
-  languageName: node
-  linkType: hard
-
-"vscode-emmet-helper@npm:1.2.17":
-  version: 1.2.17
-  resolution: "vscode-emmet-helper@npm:1.2.17"
-  dependencies:
-    "@emmetio/extract-abbreviation": 0.1.6
-    jsonc-parser: ^1.0.0
-    vscode-languageserver-types: ^3.6.0-next.1
-  checksum: 94b5ec1721836332ba91580ca8778c7352a5197faef08a349a3967c691de27c18736851d364251b8244cbf201f8638f02f30174359a4e73febce525bce1076e3
-  languageName: node
-  linkType: hard
-
-"vscode-html-languageservice@npm:3.1.4":
-  version: 3.1.4
-  resolution: "vscode-html-languageservice@npm:3.1.4"
-  dependencies:
-    vscode-languageserver-textdocument: ^1.0.1
-    vscode-languageserver-types: 3.16.0-next.2
+    vscode-languageserver-types: ^3.16.0
     vscode-nls: ^5.0.0
     vscode-uri: ^2.1.2
-  checksum: 82551137de8e4381f330d049e95dc512e74b62b77818c07d8b568aa1d86d3a0fcfc7aca4a38224ff1074e5a747aa6e490e333f245e27586d92cb27e27b50f0c4
+  checksum: 6130346b87643e4b38bce657acc4434737b8c842cebeed26b8568b4fd52a4f9ba9c72e1ec170ecdeedf3e4fc23e412da2992b367043d705f26799202a3a69740
+  languageName: node
+  linkType: hard
+
+"vscode-emmet-helper@npm:2.1.2":
+  version: 2.1.2
+  resolution: "vscode-emmet-helper@npm:2.1.2"
+  dependencies:
+    emmet: ^2.1.5
+    jsonc-parser: ^2.3.0
+    vscode-languageserver-textdocument: ^1.0.1
+    vscode-languageserver-types: ^3.15.1
+    vscode-nls: ^5.0.0
+    vscode-uri: ^2.1.2
+  checksum: aee6f6d6a29abe898709a17d22b174f90bd9230394347fa957e3c99433fab3c15bd97545f5932152d71c7f7303b28021352c740d65c7f6d494d91f62cedbcaa0
+  languageName: node
+  linkType: hard
+
+"vscode-html-languageservice@npm:4.0.0":
+  version: 4.0.0
+  resolution: "vscode-html-languageservice@npm:4.0.0"
+  dependencies:
+    vscode-languageserver-textdocument: ^1.0.1
+    vscode-languageserver-types: ^3.16.0
+    vscode-nls: ^5.0.0
+    vscode-uri: ^2.1.2
+  checksum: 048df63234829f3b3b3602fb3edba92866ef9bdca3fb11ad8f9914bc2194ad93fe29f6b489d98bba00c9bd82dc582dbcf40964009046035757ef087ac43d6ed3
   languageName: node
   linkType: hard
 
@@ -10002,7 +10026,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"vscode-languageserver-protocol@npm:^3.15.3":
+"vscode-languageserver-protocol@npm:3.16.0":
   version: 3.16.0
   resolution: "vscode-languageserver-protocol@npm:3.16.0"
   dependencies:
@@ -10019,42 +10043,21 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"vscode-languageserver-types@npm:3.15.1":
-  version: 3.15.1
-  resolution: "vscode-languageserver-types@npm:3.15.1"
-  checksum: 2c61a5a6238fe1f1d7772dbead991e930b91cf7908fc950e624fc037104eb380b40e479c30e8a8d0a88b59c3d7a97317a568253553b586f58e307d1dec1a198c
-  languageName: node
-  linkType: hard
-
-"vscode-languageserver-types@npm:3.16.0, vscode-languageserver-types@npm:^3.15.1, vscode-languageserver-types@npm:^3.6.0-next.1":
+"vscode-languageserver-types@npm:3.16.0, vscode-languageserver-types@npm:^3.15.1, vscode-languageserver-types@npm:^3.16.0":
   version: 3.16.0
   resolution: "vscode-languageserver-types@npm:3.16.0"
   checksum: 49a66a6e0abe74bc5a6356152bf9ecae3a1aceca660489c26af341eccaed93282f2d4cd07b2feac13c4687855aecd0c73fbab8bdab36138729fecdc8ca109539
   languageName: node
   linkType: hard
 
-"vscode-languageserver-types@npm:3.16.0-next.2":
-  version: 3.16.0-next.2
-  resolution: "vscode-languageserver-types@npm:3.16.0-next.2"
-  checksum: fadb5438cddbdaf1c3e4bf4c82e2bf26df7a86c326dc57cf838a252577f6f9b8874392758c7a981d04d7418765515413fe86e3f18ec591a793e17e6acaebb18b
-  languageName: node
-  linkType: hard
-
-"vscode-languageserver@npm:6.1.1":
-  version: 6.1.1
-  resolution: "vscode-languageserver@npm:6.1.1"
+"vscode-languageserver@npm:7.0.0":
+  version: 7.0.0
+  resolution: "vscode-languageserver@npm:7.0.0"
   dependencies:
-    vscode-languageserver-protocol: ^3.15.3
+    vscode-languageserver-protocol: 3.16.0
   bin:
-    installServerIntoExtension: ./bin/installServerIntoExtension
-  checksum: c33680e0f52b1391558c8dbd17128f6b12c6adf16ecfabc0c3afb21be09ef954af13a79729d5e0a623ca3341ca73fa0502ecd69554062f4354edabefb508910e
-  languageName: node
-  linkType: hard
-
-"vscode-nls@npm:^4.1.2":
-  version: 4.1.2
-  resolution: "vscode-nls@npm:4.1.2"
-  checksum: d71594bcc2fd70b79dc90601dea538d849a5b5404c188822410e437a994abdcbe447be57eec4cf42368616c16be8361a3f4eb5ef5633f076d607c96697bdc01b
+    installServerIntoExtension: bin/installServerIntoExtension
+  checksum: 6ff28308276acff60b11cc71c635331294d9a25c6c94160f343c5c9bf90bf4f52175121d82b603a8acd17db3d858c6c4ba1cf5aacdbe4244b57677c2ca7d3d4a
   languageName: node
   linkType: hard
 
@@ -10065,7 +10068,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"vscode-uri@npm:2.1.2, vscode-uri@npm:^2.1.1, vscode-uri@npm:^2.1.2":
+"vscode-uri@npm:2.1.2, vscode-uri@npm:^2.1.2":
   version: 2.1.2
   resolution: "vscode-uri@npm:2.1.2"
   checksum: e911d2a2bbb2d087eb212f3c9f8e71de1bb8bc91c8aa5f07134e5dd7e5a85f8d6d629f4aa177e36c6295eba08e3d44594763b3296b607dc233d239985ee44d38
