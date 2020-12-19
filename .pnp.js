@@ -44,6 +44,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/svelte", "virtual:76b7a7dd8dc1ac8b923eb830c5f597f6c508866f7f3017fcc67097bf65670cc1da77c58d427c118a1f1accad3981a3d156751545a23222b0417514e0512b10e9#npm:3.0.0"],
             ["@tsconfig/svelte", "npm:1.0.10"],
             ["@types/jest", "npm:26.0.19"],
+            ["@types/node", "npm:14.14.14"],
             ["jest", "npm:26.6.3"],
             ["rollup", "npm:2.35.1"],
             ["rollup-plugin-svelte", "virtual:76b7a7dd8dc1ac8b923eb830c5f597f6c508866f7f3017fcc67097bf65670cc1da77c58d427c118a1f1accad3981a3d156751545a23222b0417514e0512b10e9#npm:7.0.0"],
@@ -882,6 +883,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/svelte", "virtual:76b7a7dd8dc1ac8b923eb830c5f597f6c508866f7f3017fcc67097bf65670cc1da77c58d427c118a1f1accad3981a3d156751545a23222b0417514e0512b10e9#npm:3.0.0"],
             ["@tsconfig/svelte", "npm:1.0.10"],
             ["@types/jest", "npm:26.0.19"],
+            ["@types/node", "npm:14.14.14"],
             ["jest", "npm:26.6.3"],
             ["rollup", "npm:2.35.1"],
             ["rollup-plugin-svelte", "virtual:76b7a7dd8dc1ac8b923eb830c5f597f6c508866f7f3017fcc67097bf65670cc1da77c58d427c118a1f1accad3981a3d156751545a23222b0417514e0512b10e9#npm:7.0.0"],
@@ -1617,6 +1619,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-node-npm-14.14.13-9e58dadb81-a879dae2e0.zip/node_modules/@types/node/",
           "packageDependencies": [
             ["@types/node", "npm:14.14.13"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:14.14.14", {
+          "packageLocation": "./.yarn/cache/@types-node-npm-14.14.14-83cbbb70d3-dea8d257d4.zip/node_modules/@types/node/",
+          "packageDependencies": [
+            ["@types/node", "npm:14.14.14"]
           ],
           "linkType": "HARD",
         }]

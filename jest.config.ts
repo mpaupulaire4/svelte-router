@@ -176,8 +176,9 @@ export default {
 
   // A map from regular expressions to paths to transformers
   transform: {
-    // ...defaults.transform,
-    '^.+\\.svelte$': ["svelte-jester", { "preprocess": true }],
+    ...defaults.transform,
+    // '^.+\\.svelte$': ["svelte-jester", { "preprocess": true }],
+    '^.+\\.svelte$': ['<rootDir>/test/support/transformer/transformer', { "preprocess": true }],
   },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation

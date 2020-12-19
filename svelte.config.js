@@ -1,5 +1,5 @@
 const sveltePreprocess = require('svelte-preprocess');
-const production = !process.env.ROLLUP_WATCH;
+const production = process.env.NODE_ENV === 'production';
 
 module.exports = {
   compilerOptions: {
