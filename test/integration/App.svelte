@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {Router} from '../../src'
+	import { Router, createRouter } from '../../src'
 </script>
 
 <main>
@@ -16,7 +16,12 @@
 		<a href="/post/1">Post 1</a>
 	</div>
 
-	<Router>
+	<Router
+		router="{createRouter({
+			routes: [
+				{ path: '/post' }
+			]
+		})}"
+	/>
 
-	</Router>
 </main>

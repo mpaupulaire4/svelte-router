@@ -1,9 +1,9 @@
 import type { Readable } from 'svelte/store'
 import { writable } from 'svelte/store';
 
-export interface Location extends Readable<[URL, any]> {
-  navigate(url: URL, state?: any): void
-  redirect(url: URL, state?: any): void
+export interface Location<T = any> extends Readable<[URL, T]> {
+  navigate(url: URL, state?: T): void
+  redirect(url: URL, state?: T): void
   back(): void
   forward(): void
   popstate?(event: PopStateEvent): void

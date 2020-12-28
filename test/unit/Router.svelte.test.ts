@@ -38,7 +38,7 @@ describe('Router.svelte', () => {
     it('should ignore uncontrolled and external links', () => {
       const { getByText } = render(Router, {
         location: mockLocation,
-        router: createRouter({ base: 'home' })
+        router: createRouter({ path: 'home' })
       })
 
       fireEvent.click(getByText('External Link'))
@@ -49,7 +49,7 @@ describe('Router.svelte', () => {
     it('should redirect when linking to current location', () => {
       const { getByText } = render(Router, {
         location: mockLocation,
-        router: createRouter({ base: 'home' })
+        router: createRouter({ path: 'home' })
       })
 
       fireEvent.click(getByText('Home Link'))
@@ -60,7 +60,7 @@ describe('Router.svelte', () => {
     it('should navigate when linking to a different location', () => {
       const { getByText } = render(Router, {
         location: mockLocation,
-        router: createRouter({ base: 'home' })
+        router: createRouter({ path: 'home' })
       })
 
       fireEvent.click(getByText('About Link'))

@@ -2,7 +2,7 @@ import type { Params } from './Recognizer'
 import { strip, createRecognizer } from './Recognizer'
 
 interface Route<T> {
-  path: string
+  path?: string
   routes?: Route<T>[]
   handler?: T | (() => Promise<T>)
 }
@@ -13,7 +13,7 @@ interface FlattenPesult {
 }
 
 export function flattenRoute<T>(
-  {path, routes, handler}: Route<T>,
+  {path = '', routes, handler}: Route<T>,
   parent: FlattenPesult = { path: '', handlers: [] }
 ): FlattenPesult[] {
   const handlers = handler ? parent.handlers.concat(handler) : parent.handlers
@@ -68,13 +68,12 @@ function toActiveHandler(
 // TODO: explicitly create a context object to be passed in
 // This will fix the issue where the context on preloads isn't ever saved
 // This will also allow the handling of redirects during a route change
-export function createRouter({ base = '', routes = []}: RouterConfig = {}) {
-  const { match, sort, add, controlled } = createRecognizer<Route<Handler>['handler']>(base)
+export function createRouter(baseRoute: Route<Handler> = { path: '' }) {
+  const { match, sort, add, controlled } = createRecognizer<Route<Handler>['handler']>(baseRoute.path)
   const preloads = new Map<string, Array<ActiveHandler | Promise<ActiveHandler>>>()
 
-  routes.forEach((route) =>
-    flattenRoute(route)
-      .forEach(({path, handlers}) => add(path, ...handlers)))
+  flattenRoute(baseRoute)
+    .forEach(({path, handlers}) => add(path, ...handlers))
 
   function get(path: URL, ...args: any[]): Array<ActiveHandler | Promise<ActiveHandler>> | null {
     const matched = match(path.pathname)

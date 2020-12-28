@@ -30,6 +30,7 @@ describe('flattenRoute', () => {
 describe('Router', () => {
   it('should match routes', () => {
     const router = createRouter({
+      path: '',
       routes: [
         {
           path: '/',
@@ -111,6 +112,7 @@ describe('Router', () => {
 
   it('should handle async handlers', async () => {
     const router = createRouter({
+      path: '',
       routes: [
         {
           path: '/',
@@ -125,6 +127,7 @@ describe('Router', () => {
   })
   it('should handle data methods', async () => {
     const router = createRouter({
+      path: '',
       routes: [
         {
           path: '/',
@@ -150,6 +153,7 @@ describe('Router', () => {
   it('should allow passing extra information to data handlers', async () => {
     const mock = jest.fn((...args) => ({some: 'data'}))
     const router = createRouter({
+      path: '',
       routes: [
         {
           path: '/',

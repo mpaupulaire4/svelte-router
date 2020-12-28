@@ -87,7 +87,7 @@ const <%= name %>_store = register_preload('<%= path %>', <%= name %>.prefetch, 
 `.trim()),
 }
 
-module.exports = {
+export {
   ssr,
   client,
   client_split,

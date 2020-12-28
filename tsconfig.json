@@ -10,10 +10,11 @@
     "module": "ESNEXT",
     "noImplicitAny": true,
     "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
     "lib": [
       "ES2019",
       "dom",
     ],
-    "types": ["jest", "svelte"]
+    "types": ["jest", "svelte", "node"]
   }
 }

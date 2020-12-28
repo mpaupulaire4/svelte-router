@@ -1,8 +1,8 @@
-const fs = require('fs');
-const path = require('path');
-const { compile } = require('svelte/compiler')
-const pkg = require('../package.json');
-const templates = require('./templates');
+import fs from 'fs';
+import path from 'path';
+import { compile } from 'svelte/compiler'
+import pkg from '../package.json';
+import * as templates from './templates';
 
 function filename(file) {
 	return file.replace(path.extname(file), '')
@@ -118,11 +118,11 @@ function parse_routes(routes, ssr = false) {
 	}
 }
 
-module.exports = function SvelteFileRouter({
+export default function SvelteFileRouter({
   rootDir = './src/routes',
 	virtual = `${pkg.name}/Routes.svelte`,
 	ssr = false,
-	extensions = ['.svelte', '.html']
+	extensions = ['.svelte']
 } = {}) {
 	rootDir = path.resolve(rootDir)
 	return {
