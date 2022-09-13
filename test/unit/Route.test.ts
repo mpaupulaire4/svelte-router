@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom"
 import { writable } from 'svelte/store'
-import ChildRoute from 'lib/Route.svelte'
+import Route from 'lib/Route.svelte'
 import Log from '../support/Log.svelte'
 import { withContext } from '../support/helpers'
 import type { ComponentType } from "svelte"
@@ -14,7 +14,7 @@ const render = withContext([
 describe('ChildRoute.svelte', () => {
   it('shouldn\'t render if there are no handlers', () => {
     store.set([])
-    const { container } = render(ChildRoute)
+    const { container } = render(Route)
     expect(container).toHaveTextContent('')
   })
 
@@ -22,7 +22,7 @@ describe('ChildRoute.svelte', () => {
     store.set([
       [Log, 'I am an only child' ],
     ])
-    const { container } = render(ChildRoute)
+    const { container } = render(Route)
     expect(container).toHaveTextContent('{ "data": "I am an only child" }')
   })
 
@@ -30,7 +30,7 @@ describe('ChildRoute.svelte', () => {
     store.set([
       [Log , null]
     ])
-    const { container } = render(ChildRoute, { text: 'the more the merrier' })
+    const { container } = render(Route, { text: 'the more the merrier' })
     expect(container).toHaveTextContent('{ "data": null, "text": "the more the merrier" }')
   })
 
@@ -41,7 +41,7 @@ describe('ChildRoute.svelte', () => {
       [Log, 'three' ],
       [Log, 'four' ],
     ])
-    const { container } = render(ChildRoute)
+    const { container } = render(Route)
     expect(container).toHaveTextContent('{ "data": "one" } { "data": "two" } { "data": "three" } { "data": "four" }')
   })
 })
