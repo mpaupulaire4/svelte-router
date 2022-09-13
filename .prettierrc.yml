@@ -1,0 +1,7 @@
+arrowParens: 'avoid'
+singleQuote: true
+printWidth: 90
+plugins:
+  - 'prettier-plugin-svelte'
+svelteStrictMode: false
+svelteIndentScriptAndStyle: true
