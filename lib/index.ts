@@ -1,7 +1,7 @@
 import { onMount, setContext, type ComponentType } from 'svelte';
 import navaid from './navaid';
 import { flattenRoutes, type FlatRoute, type Route } from './utils';
-export {default as Route } from './Route.svelte'
+export { default as Route } from './Route.svelte';
 
 type RouteData = [ComponentType, unknown][];
 
@@ -33,4 +33,3 @@ export function useHandlers(handlers: FlatRoute[], base = '') {
   setContext('svelte-router', context);
   return context;
 }
-

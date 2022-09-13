@@ -16,6 +16,11 @@
     }
   },
   "scripts": {
+    "ci": "yarn lint && yarn check",
+    "format": "prettier --write \"./src/**/*.{js,svelte,html,ts}\" \"./lib/**/*.{js,svelte,ts}\"",
+    "lint": "eslint './src/**/*.{js,ts,svelte}' './lib/**/*.{js,ts,svelte}'",
+    "lint:fix": "yarn lint --fix",
+    "prelint:fix": "yarn format",
     "dev": "vite",
     "build": "vite build",
     "test": "vitest",

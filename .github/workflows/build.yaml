@@ -1,0 +1,39 @@
+name: Test
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches:
+      - main
+jobs:
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: 'yarn'
+          node-version: 16
+      - name: Install dependencies
+        run: yarn install
+      - name: Run Tests
+        run: yarn ci
+  # build:
+  #   name: Build
+  #   needs: test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         cache: 'yarn'
+  #         node-version: 16
+  #     - name: Install dependencies
+  #       run: yarn install
+  #     - name: Build Library
+  #       run: yarn build
+  #
