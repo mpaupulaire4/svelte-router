@@ -4,7 +4,7 @@
   "type": "module",
   "files": [
     "dist",
-    "src"
+    "lib"
   ],
   "main": "./dist/svelte-router.umd.cjs",
   "module": "./dist/svelte-router.js",
@@ -41,6 +41,7 @@
     "jsdom": "^20.0.0",
     "prettier": "^2.7.1",
     "prettier-plugin-svelte": "^2.7.0",
+    "semantic-release": "^19.0.5",
     "svelte": "^3.50.1",
     "svelte-check": "^2.8.1",
     "svelte-preprocess": "^4.10.7",
@@ -56,5 +57,13 @@
   },
   "peerDependencies": {
     "svelte": "^3.50.1"
+  },
+  "release": {
+    "branches": ["main", "master"],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/github"
+    ]
   }
 }

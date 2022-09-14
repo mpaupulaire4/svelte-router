@@ -17,7 +17,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: 'yarn'
-          node-version: 16
+          node-version: 'lts/*'
       - name: Install dependencies
         run: yarn install
       - name: Run Tests
@@ -31,7 +31,7 @@ jobs:
   #     - uses: actions/setup-node@v3
   #       with:
   #         cache: 'yarn'
-  #         node-version: 16
+  #         node-version: 'lts/*'
   #     - name: Install dependencies
   #       run: yarn install
   #     - name: Build Library
