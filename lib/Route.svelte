@@ -1,12 +1,10 @@
-<script lang="ts">
-  import type { Readable } from 'svelte/store';
+<script>
+  import { getContext, setContext } from 'svelte';
 
-  import { getContext, setContext, type ComponentType } from 'svelte';
-
-  const handlers = getContext<Readable<[ComponentType, unknown][]>>(
-    'svelte-router-internal-handlers'
-  );
-  const index = getContext<number>('svelte-router-internal-index') || 0;
+  /** @type {import('svelte/store').Readable<Array<[import('svelte').ComponentType, unknown]>>} */
+  const handlers = getContext('svelte-router-internal-handlers');
+  /** @type number */
+  const index = getContext('svelte-router-internal-index') || 0;
   setContext('svelte-router-internal-index', index + 1);
 
   $: handler = $handlers?.[index];

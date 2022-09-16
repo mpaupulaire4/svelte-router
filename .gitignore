@@ -12,6 +12,13 @@ dist
 dist-ssr
 *.local
 coverage
+lib/**/*.js
+src/**/*.js
+test/**/*.js
+lib/**/*.js.map
+src/**/*.js.map
+test/**/*.js.map
+
 
 # Editor directories and files
 .vscode/*
