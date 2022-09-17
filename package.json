@@ -63,6 +63,9 @@
   "peerDependencies": {
     "svelte": "^3.50.1"
   },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "release": {
     "branches": [
       "main"
