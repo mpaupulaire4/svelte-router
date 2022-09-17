@@ -22,18 +22,18 @@ jobs:
         run: yarn install
       - name: Run Tests
         run: yarn ci
-  # build:
-  #   name: Build
-  #   needs: test
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         cache: 'yarn'
-  #         node-version: 'lts/*'
-  #     - name: Install dependencies
-  #       run: yarn install
-  #     - name: Build Library
-  #       run: yarn build
-  #
+  build:
+    name: Build
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: 'yarn'
+          node-version: 'lts/*'
+      - name: Install dependencies
+        run: yarn install
+      - name: Build Library
+        run: yarn build
+

@@ -1,4 +1,5 @@
 # Svelte + TS + Vite
+[![Test](https://github.com/mpaupulaire4/svelte-router/actions/workflows/build.yaml/badge.svg)](https://github.com/mpaupulaire4/svelte-router/actions/workflows/build.yaml)
 
 This template should help get you started developing with Svelte and TypeScript in Vite.
 
