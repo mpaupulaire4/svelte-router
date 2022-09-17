@@ -20,7 +20,7 @@ export default defineConfig({
     lib: {
       entry: resolvePath('./lib/index.ts'),
       name: 'SvelteRouter',
-      formats: ['es', 'cjs'],
+      formats: ['cjs'],
       // the proper extensions will be added
       fileName: 'svelte-router',
     },
