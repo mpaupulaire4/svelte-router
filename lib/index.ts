@@ -6,14 +6,15 @@ export { default as Route } from './Route.svelte';
 type RouteData = [ComponentType, unknown][];
 
 export function useRoutes(routes: Array<Route>, base = '') {
-  return useHandlers(flattenRoutes(routes), base);
+  const handlers = flattenRoutes(routes);
+  handlers.forEach(r => r.handlers.reverse())
+  return useHandlers(handlers, base);
 }
 
 export function useHandlers(handlers: FlatRoute[], base = '') {
   const { listen, on, route, subscribe, preload, run } = navaid<RouteData>(base);
   setContext('svelte-router-internal-handlers', { subscribe });
   handlers.forEach(r => {
-    r.handlers.reverse();
     on(r.path, (params, ctx) => {
       return r.handlers.map<[ComponentType, unknown]>(([c, h]) => [
         c,
