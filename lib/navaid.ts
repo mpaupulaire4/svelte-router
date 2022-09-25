@@ -75,7 +75,7 @@ export default function Navaid<T>(base = '') {
 
   function run(uri: string): Context | undefined {
     uri = preload(uri);
-    const { data, ctx } = (cache.get(uri) || {}) as Partial<CacheItem<T>>;
+    const { data, ctx } = cache.get(uri) || {};
     set(data);
     cache.clear();
     return ctx;
@@ -91,7 +91,7 @@ export default function Navaid<T>(base = '') {
       if (!y) return;
       if (y[0] != '/' || rgx.test(y)) {
         e.preventDefault();
-        route(y);
+        route(y, y === location.pathname);
       }
     }
 
