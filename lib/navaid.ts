@@ -1,4 +1,3 @@
-import { parse as convert, type RouteParams } from 'regexparam';
 import { writable } from '@crikey/stores-strict';
 import { getAnchorHREF, cleanPath } from './utils';
 
@@ -16,7 +15,7 @@ type CacheItem<T> = {
   ctx: Context;
 };
 
-export default function Navaid<T>(base = '') {
+export default function Router<T>(base = '') {
   const routes: RouteMatcher<T>[] = [];
   const { set, subscribe } = writable<T | undefined>();
   const cache = new Map<string, CacheItem<T>>();
@@ -35,12 +34,14 @@ export default function Navaid<T>(base = '') {
     history[replace ? 'replaceState' : 'pushState'](run(uri), '', uri);
   }
 
-  function on<S extends string>(
-    pat: S,
-    fn: (params: RouteParams<S>, ctx: Context, uri: string) => T
+  function add<K extends string>(
+    pattern: RegExp,
+    keys: Array<K>,
+    fn: (params: Record<K, string>, ctx: Context, uri: string) => T
   ) {
     routes.push({
-      ...convert(pat),
+      pattern,
+      keys,
       fn,
     });
   }
@@ -122,6 +123,6 @@ export default function Navaid<T>(base = '') {
     preload,
     subscribe,
     listen,
-    on,
+    add,
   };
 }

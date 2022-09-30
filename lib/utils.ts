@@ -11,7 +11,9 @@ export interface Route {
 }
 
 export interface FlatRoute {
-  path: string;
+  path?: string;
+  pattern?: RegExp;
+  keys?: string[];
   handlers: [ComponentType, DataFN | void][];
 }
 

@@ -1,3 +1,3 @@
 /// <reference types="svelte" />
-/// <reference types="vite/client" />
 /// <reference types="vitest/importMeta" />
+/// <reference types="vite/client" />
