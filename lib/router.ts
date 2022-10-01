@@ -10,23 +10,23 @@ export type RouteMatcher<T> = {
   fn: (params: any, ctx: any, uri: string) => T;
 };
 
-type CacheItem<T> = {
-  data: T;
-  ctx: Context;
-};
+export type RouteData<T> = [string, Context, T | null];
 
 export default function Router<T>(base = '') {
   const routes: RouteMatcher<T>[] = [];
-  const { set, subscribe } = writable<T | undefined>();
-  const cache = new Map<string, CacheItem<T>>();
+  const { set, subscribe } = writable<RouteData<T>>(['', {}, null]);
+  const cache = new Map<string, RouteData<T>>();
 
   base = cleanPath(base);
-  const rgx = base == '/' ? /^\/+/ : new RegExp('^\\' + base + '(?=\\/|$)\\/?', 'i');
+  const rgx =
+    base == '/'
+      ? /^\/+/
+      : new RegExp('^' + base.split('/').join('\\/') + '(?=\\/|$)\\/?', 'i');
 
   function fmt(uri: string) {
     if (!uri) return uri;
     uri = cleanPath(uri);
-    return rgx.test(uri) ? uri.replace(rgx, '/') : '';
+    return rgx.test(uri) ? uri.replace(rgx, '/') : uri;
   }
 
   function route(uri: string, replace = false) {
@@ -46,7 +46,7 @@ export default function Router<T>(base = '') {
     });
   }
 
-  function get(uri: string, ctx: Context = {}): T | undefined {
+  function get(uri: string, ctx: Context = {}): RouteData<T> | undefined {
     const params: Context = {};
     let arr: RegExpExecArray | null, obj: RouteMatcher<T>;
     for (let i = 0; i < routes.length; i++) {
@@ -54,21 +54,19 @@ export default function Router<T>(base = '') {
         for (i = 0; i < obj.keys.length; ) {
           params[obj.keys[i]] = arr[++i] || null;
         }
-        return obj.fn(params, ctx, uri);
+        return [uri, ctx, obj.fn(params, ctx, uri)];
       }
     }
+    return;
   }
 
   function preload(uri: string): string {
     uri = fmt(uri);
-    if (uri && !cache.has(uri)) {
+    if (!cache.has(uri)) {
       const ctx: Context = {};
       const data = get(uri, ctx);
       if (data) {
-        cache.set(uri, {
-          data,
-          ctx,
-        });
+        cache.set(uri, data);
       }
     }
     return uri;
@@ -76,15 +74,21 @@ export default function Router<T>(base = '') {
 
   function run(uri: string): Context | undefined {
     uri = preload(uri);
-    const { data, ctx } = cache.get(uri) || {};
+    const data = cache.get(uri) || [uri, {}, null];
     set(data);
     cache.clear();
-    return ctx;
+    return data[1];
   }
 
   function listen() {
+    function change(uri: string, ctx: Context = {}) {
+      uri = fmt(uri);
+      const data = uri && get(uri, ctx);
+      set(data || [uri, {}, null]);
+    }
+
     function handle(e: PopStateEvent) {
-      set(get(location.pathname, e.state as Context));
+      change(location.pathname, e.state as Context);
     }
 
     function click(e: MouseEvent) {
@@ -109,7 +113,7 @@ export default function Router<T>(base = '') {
     addEventListener('click', click);
     addEventListener('mouseenter', hover);
 
-    set(get(location.pathname, history.state as Context));
+    change(location.pathname, history.state as Context);
     return () => {
       removeEventListener('popstate', handle);
       removeEventListener('click', click);

@@ -1,15 +1,16 @@
+<script lang="ts" context="module">
+  const indexKey = 'svelte-router-internal-index';
+</script>
+
 <script lang="ts">
-  import type { Readable } from 'svelte/store';
+  import { getContext, setContext } from 'svelte';
+  import { getInternal } from './utils';
 
-  import { getContext, setContext, type ComponentType } from 'svelte';
+  const internal = getInternal();
+  const index = getContext<number>(indexKey) || 0;
+  setContext(indexKey, index + 1);
 
-  const handlers = getContext<Readable<[ComponentType, unknown][]>>(
-    'svelte-router-internal-handlers'
-  );
-  const index = getContext<number>('svelte-router-internal-index') || 0;
-  setContext('svelte-router-internal-index', index + 1);
-
-  $: handler = $handlers?.[index];
+  $: handler = $internal?.[2]?.[index];
 </script>
 
 {#if handler}

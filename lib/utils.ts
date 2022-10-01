@@ -1,4 +1,6 @@
-import type { ComponentType } from 'svelte';
+import { getContext, setContext, type ComponentType } from 'svelte';
+import type { Readable } from 'svelte/store';
+import type { RouteData } from './router';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type DataFN = (params: any, ctx: any) => any;
@@ -48,5 +50,16 @@ export function getAnchorHREF(e: MouseEvent): string | undefined {
 export function cleanPath(path: string) {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   path = path.match(/^[^?#]*/)![0];
-  return `/${path.replace(/^\/|\/$/g, '')}`;
+  return `/${path.replace(/^\/+|\/+$/g, '')}`;
+}
+
+
+export type ResolvedHandlers = [ComponentType, unknown][];
+const contextKey = 'svelte-router-internal';
+export function getInternal() {
+  return getContext<Readable<RouteData<ResolvedHandlers>>>(contextKey);
+}
+
+export function setInternal(internal: ReturnType<typeof getInternal>) {
+  setContext(contextKey, internal);
 }

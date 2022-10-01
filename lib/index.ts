@@ -1,10 +1,16 @@
 import { onMount, setContext, type ComponentType, getContext } from 'svelte';
-import navaid from './navaid';
-import { flattenRoutes, type FlatRoute, type Route } from './utils';
+import router from './router';
+import {
+  type FlatRoute,
+  type Route,
+  type ResolvedHandlers,
+  flattenRoutes,
+  setInternal,
+} from './utils';
 export { default as Route } from './Route.svelte';
 import { parse as convert } from 'regexparam';
 
-type RouteData = [ComponentType, unknown][];
+const contextKey = 'svelte-router';
 
 export function useHandlers(handlers: FlatRoute[], base = '', listen = true) {
   const {
@@ -14,10 +20,10 @@ export function useHandlers(handlers: FlatRoute[], base = '', listen = true) {
     subscribe,
     preload,
     run,
-  } = navaid<RouteData>(base);
-  setContext('svelte-router-internal-handlers', { subscribe });
+  } = router<ResolvedHandlers>(base);
+  setInternal({ subscribe });
   handlers.forEach(({ pattern, path, keys, handlers }) => {
-    let p: { pattern: RegExp, keys: string[] };
+    let p: { pattern: RegExp; keys: string[] };
     if (pattern) {
       p = {
         pattern,
@@ -27,10 +33,7 @@ export function useHandlers(handlers: FlatRoute[], base = '', listen = true) {
       p = convert(path || '/');
     }
     add(p.pattern, p.keys, (params, ctx) => {
-      return handlers.map<[ComponentType, unknown]>(([c, h]) => [
-        c,
-        h && h(params, ctx),
-      ]);
+      return handlers.map<[ComponentType, unknown]>(([c, h]) => [c, h && h(params, ctx)]);
     });
   });
 
@@ -44,7 +47,7 @@ export function useHandlers(handlers: FlatRoute[], base = '', listen = true) {
     preload,
   };
 
-  setContext('svelte-router', context);
+  setContext(contextKey, context);
   return context;
 }
 
@@ -55,5 +58,5 @@ export function useRoutes(routes: Array<Route>, base = '', listen = true) {
 }
 
 export function useRouter() {
-  return getContext<ReturnType<typeof useHandlers>>('svelte-router');
+  return getContext<ReturnType<typeof useHandlers>>(contextKey);
 }
