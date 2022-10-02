@@ -1,7 +1,6 @@
 import { defineConfig } from 'vitest/config';
 import { resolve } from 'path';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-import typescript from '@rollup/plugin-typescript';
 
 const resolvePath = (path: string) => resolve(__dirname, path);
 
@@ -32,14 +31,6 @@ export default defineConfig({
         '@crikey/stores-strict',
         'regexparam',
         'svelte',
-      ],
-      plugins: [
-        typescript({
-          target: 'ESNEXT',
-          rootDir: resolvePath('./lib'),
-          declaration: true,
-          declarationDir: resolvePath('./dist'),
-        }),
       ],
     },
   },

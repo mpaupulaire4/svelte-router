@@ -2,22 +2,21 @@
   "name": "@mpaupulaire4/svelte-router",
   "version": "4.0.0",
   "license": "MIT",
-  "svelte": "./lib/index.js",
+  "svelte": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "module": "./lib/index.js",
+  "module": "./dist/index.js",
   "main": "./dist/svelte-router.umd.cjs",
   "author": "Michel Paupulaire <mpaupulaire4@gmail.com>",
   "repository": "git@github.com:mpaupulaire4/svelte-router.git",
   "type": "module",
   "files": [
-    "dist",
-    "lib"
+    "dist"
   ],
   "exports": {
-    "./Route.svelte": "./lib/Route.svelte",
+    "./Route.svelte": "./dist/Route.svelte",
     ".": {
-      "import": "./lib/index.js",
-      "require": "./dist/svelte-router.umd.cjs"
+      "import": "./dist/index.js",
+      "require": "./dist/svelte-router.cjs"
     }
   },
   "scripts": {
@@ -27,14 +26,14 @@
     "lint:fix": "yarn lint --fix",
     "prelint:fix": "yarn format",
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build && tsc && yarn copy",
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "preview": "vite preview",
-    "check": "svelte-check --tsconfig ./tsconfig.json"
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "copy": "copyfiles -u 1 \"lib/**/*.svelte\" dist"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^8.5.0",
     "@sveltejs/vite-plugin-svelte": "^1.0.2",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/svelte": "^3.2.1",
@@ -42,6 +41,7 @@
     "@typescript-eslint/eslint-plugin": "^5.33.1",
     "@typescript-eslint/parser": "^5.33.1",
     "@vitest/coverage-c8": "^0.23.2",
+    "copyfiles": "^2.4.1",
     "eslint": "^8.22.0",
     "eslint-plugin-svelte3": "^4.0.0",
     "jsdom": "^20.0.0",
@@ -51,7 +51,6 @@
     "svelte": "^3.50.1",
     "svelte-check": "^2.8.1",
     "svelte-preprocess": "^4.10.7",
-    "tslib": "^2.4.0",
     "typescript": "^4.6.4",
     "vite": "^3.1.0",
     "vitest": "^0.23.2"
